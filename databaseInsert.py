@@ -1,5 +1,5 @@
 import sqlite3
-import windows
+import windowsAdd as wa
 
 db = 'Pet-shop.db'
 
@@ -12,7 +12,7 @@ def insertTipoProducto():
         print("Connected to SQLite")
         c = connection.cursor()
 
-        lista = windows.newTipoProducto()
+        lista = wa.newTipoProducto()
         print("NOMBRE: " + lista['nombre'])
 
         # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
