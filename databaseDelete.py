@@ -3,7 +3,7 @@ import windowsAdd as wa
 
 db = 'Pet-shop.db'
 
-def insertTipoProducto():
+def removeTipoProducto(input):
     try:
         # Making a connection between sqlite3 database and Python Program
         connection = sqlite3.connect(db)
@@ -11,15 +11,13 @@ def insertTipoProducto():
         # Otherwise it will show errors
         print("Connected to SQLite")
         c = connection.cursor()
-    
-        lista = wa.newTipoProducto()
-        print("NOMBRE: " + lista['nombre'])
 
         # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
         # (lista['nombre'], lista['precio'], lista['ganancia'], lista['codigoBarras'])
 
-        c.execute("INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        (lista['nombre'], str(float(lista['precio']) + float(lista['precio']) * float(lista['ganancia'])/100), lista['ganancia'], lista['codigoBarras']))
+        c.execute("DELETE FROM TiposProducto WHERE " + 
+        "nombre = '" + input + 
+        "' OR codigoBarras = '" + input + "'")
         print("Table ready")
     except sqlite3.Error as error:
         print("Failed to connect with sqlite3 database", error)
