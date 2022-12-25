@@ -16,8 +16,8 @@ def readTiposProducto():
     # print(data)
     retData = []
     for row in data:
-        newRow = (row[0], row[1], str(row[2]) +
-                  "%", row[1] * row[2]/100, row[3])
+        newRow = (row[0], round(row[1]), str(round((row[2]/(row[1]-row[2]))*100, 2)) +
+                  "%", round(row[2], 2), row[3])
         # print(newRow)
         retData.append(newRow)
     # c.execute('SELECT * FROM Productos')

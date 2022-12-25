@@ -92,10 +92,14 @@ def mainWindow():
                      key='-TABLE-',
                      row_height=35)
 
-    tabProductsLayout = [[sg.InputText(key='-INPUT-'), sg.Button('Buscar', key='_SEARCH_'), sg.Button('Agregar', key='_ADD_'), sg.Button('Eliminar', key='_DELETE_')],
-                  [table]
-                  ]
-    
+    tabProductsLayout = [[sg.InputText(key='-INPUT-'),
+                          sg.Button('Buscar', key='_SEARCH_'),
+                          sg.Button('Agregar', key='_ADD_'),
+                          sg.Button('Eliminar', key='_DELETE_'),
+                          sg.Button('Editar', key='_EDIT_')],
+                         [table]
+                         ]
+
     tabSalesLayout = [[sg.Text("Ventas")]]
 
     layout = [
@@ -118,13 +122,17 @@ def mainWindow():
             di.insertTipoProducto()
         elif event == '_DELETE_':
             input = sg.popup_get_text('Digite el nombre del producto o su codigo de barras.\n' +
-            'PRECAUCION: Si hay mas de un producto con este nombre o codigo, todos seran eliminados.\n' + 
-            'Ademas, no se podra eliminar el producto si aun hay en el inventario.')
-            dd.removeTipoProducto(input)
+                                      'PRECAUCION: Si hay mas de un producto con este nombre o codigo, todos seran eliminados.\n' +
+                                      'Ademas, no se podra eliminar el producto si aun hay en el inventario.')
+            print(input)
+            if input != None:
+                dd.removeTipoProducto(input)
 
     window.close()
 
-# Guardar la ganancia en numero, no porcentaje, para hacer la mate bien
-# Validar botones de cerrar al agregar o eliminar
+
 # Validar que no se elimine si hay en inventario
+# Hacer inventario
+# Hacer boton de editar
+# 
 mainWindow()

@@ -11,7 +11,7 @@ def newTipoProducto():
     layout = [[sg.Text("Insertar Tipo de Producto")],
               [sg.Text('Nombre:'), sg.InputText(key='nombre')],
               [sg.Text('Precio:'), sg.InputText(key='precio')],
-              [sg.Text('Ganancia:'), sg.InputText(key='ganancia')],
+              [sg.Text('Porcentaje de Ganancia:'), sg.InputText(key='ganancia')],
               [sg.Text('Codigo de Barras:'), sg.InputText(key='codigoBarras')],
               [sg.Submit(), sg.Cancel()]
               ]

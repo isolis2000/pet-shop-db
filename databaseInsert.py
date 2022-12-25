@@ -1,35 +1,33 @@
 import sqlite3
 import windowsAdd as wa
+import util
 
 db = 'Pet-shop.db'
 
 def insertTipoProducto():
     try:
-        # Making a connection between sqlite3 database and Python Program
         connection = sqlite3.connect(db)
-        # If sqlite3 makes a connection with python program then it will print "Connected to SQLite"
-        # Otherwise it will show errors
         print("Connected to SQLite")
         c = connection.cursor()
-    
-        lista = wa.newTipoProducto()
-        print("NOMBRE: " + lista['nombre'])
 
-        # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        # (lista['nombre'], lista['precio'], lista['ganancia'], lista['codigoBarras'])
+        dictTipos = wa.newTipoProducto()
+        if util.verifyDict(dictTipos):
+            print(dictTipos)
+            print("NOMBRE: " + dictTipos['nombre'])
 
-        c.execute("INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        (lista['nombre'], str(float(lista['precio']) + float(lista['precio']) * float(lista['ganancia'])/100), lista['ganancia'], lista['codigoBarras']))
-        print("Table ready")
+            # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
+            # (dictTipos['nombre'], dictTipos['precio'], dictTipos['ganancia'], dictTipos['codigoBarras'])
+
+            c.execute("INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
+                    (dictTipos['nombre'], str(float(dictTipos['precio']) + float(dictTipos['precio']) * float(dictTipos['ganancia'])/100), 
+                    str(float(dictTipos['precio']) * float(dictTipos['ganancia'])/100), dictTipos['codigoBarras']))
+            print("Table ready")
     except sqlite3.Error as error:
         print("Failed to connect with sqlite3 database", error)
     finally:
-        # Inside Finally Block, If connection is open, we need to close it
         if connection:
 
             connection.commit()
             c.close()
-            # using close() method, we will close the connection
             connection.close()
-            # After closing connection object, we will print "the sqlite connection is closed"
             print("the sqlite connection is closed")
