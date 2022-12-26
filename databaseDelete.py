@@ -1,5 +1,5 @@
 import sqlite3
-import windowsAdd as wa
+import windowsEdit as wa
 
 db = 'Pet-shop.db'
 

@@ -1,7 +1,7 @@
 from tkinter.simpledialog import askfloat
 import PySimpleGUI as sg
 import databaseRead as dr
-import databaseInsert as di
+import databaseEdit as de
 import databaseDelete as dd
 
 sg.theme("DarkTanBlue")
@@ -89,6 +89,8 @@ def mainWindow():
                      # col_widths=60,
                      display_row_numbers=False,
                      justification='center',
+                     enable_events=True,
+                     select_mode=sg.TABLE_SELECT_MODE_BROWSE,
                      key='-TABLE-',
                      row_height=35)
 
@@ -99,6 +101,13 @@ def mainWindow():
                           sg.Button('Editar', key='_EDIT_')],
                          [table]
                          ]
+    tabInventory = [[sg.InputText(key='-INPUT-'),
+                     sg.Button('Buscar', key='_SEARCH_'),
+                     sg.Button('Agregar', key='_ADD_'),
+                     sg.Button('Eliminar', key='_DELETE_'),
+                     sg.Button('Editar', key='_EDIT_')],
+                    [table]
+                    ]
 
     tabSalesLayout = [[sg.Text("Ventas")]]
 
@@ -106,6 +115,7 @@ def mainWindow():
         [sg.TabGroup([[sg.Tab('Productos', tabProductsLayout), sg.Tab('Ventas', tabSalesLayout)]])]]
 
     window = sg.Window('Ventana Principal', layout, font='Courier 12')
+    dataSelected = []
 
     while True:
         window.refresh()
@@ -119,7 +129,7 @@ def mainWindow():
                 data = dr.readTiposProductoN(values['-INPUT-'])
             window['-TABLE-'].update(data)
         elif event == '_ADD_':
-            di.insertTipoProducto()
+            de.insertTipoProducto()
         elif event == '_DELETE_':
             input = sg.popup_get_text('Digite el nombre del producto o su codigo de barras.\n' +
                                       'PRECAUCION: Si hay mas de un producto con este nombre o codigo, todos seran eliminados.\n' +
@@ -127,6 +137,11 @@ def mainWindow():
             print(input)
             if input != None:
                 dd.removeTipoProducto(input)
+        elif event == '-TABLE-':
+            dataSelected = [data[row] for row in values[event]]
+        elif event == '_EDIT_' and dataSelected != []:
+            print(dataSelected)
+            de.editTipoProducto(dataSelected[0])
 
     window.close()
 
@@ -134,5 +149,5 @@ def mainWindow():
 # Validar que no se elimine si hay en inventario
 # Hacer inventario
 # Hacer boton de editar
-# 
+#
 mainWindow()
