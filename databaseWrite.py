@@ -71,5 +71,3 @@ def createErrores(cursor):
 
     cursor.execute(command)
     print("Table Errores successfully created")
-
-

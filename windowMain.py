@@ -41,10 +41,10 @@ sg.theme("DarkTanBlue")
 # def searchTiposProducto():
 
 #     headings = ['Nombre', 'Precio',  '%' + ' Ganancia', 'Ganancia', 'Codigo']
-#     data = dr.readTiposProducto()
-#     print(data)
+#     dataProducts = dr.readTiposProducto()
+#     print(dataProducts)
 
-#     table = sg.Table(values=data,
+#     table = sg.Table(values=dataProducts,
 #                      headings=headings,
 #                      auto_size_columns=False,
 #                      max_col_width=30,
@@ -52,10 +52,10 @@ sg.theme("DarkTanBlue")
 #                      # col_widths=60,
 #                      display_row_numbers=False,
 #                      justification='center',
-#                      key='-TABLE-',
+#                      key='-TABLE_P-',
 #                      row_height=35)
 
-#     layout = [[sg.InputText(key='-INPUT-'), sg.Button('Buscar', key='_SEARCH_'), sg.Button('Agregar', key='_ADD_')],
+#     layout = [[sg.InputText(key='-INPUT_P-'), sg.Button('Buscar', key='_SEARCH_P_'), sg.Button('Agregar', key='_ADD_P_')],
 #               [table]
 #               ]
 
@@ -66,23 +66,25 @@ sg.theme("DarkTanBlue")
 #         event, values = window.read()
 #         if event == "Exit" or event == sg.WIN_CLOSED:
 #             break
-#         elif event == '_SEARCH_':
-#             if values['-INPUT-'] == '':
-#                 data = dr.readTiposProducto()
+#         elif event == '_SEARCH_P_':
+#             if values['-INPUT_P-'] == '':
+#                 dataProducts = dr.readTiposProducto()
 #             else:
-#                 data = dr.readTiposProductoN(values['-INPUT-'])
+#                 dataProducts = dr.readTiposProductoN(values['-INPUT_P-'])
 
-#             window['-TABLE-'].update(data)
+#             window['-TABLE_P-'].update(dataProducts)
 
 #     window.close()
 
 def mainWindow():
 
-    headings = ['Nombre', 'Precio',  '%' + ' Ganancia', 'Ganancia', 'Codigo']
-    data = dr.readTiposProducto()
+    headingsProducts = ['Nombre', 'Precio',  '%' + ' Ganancia', 'Ganancia', 'Codigo']
+    headingsInventory = ['Nombre', 'Compra', 'Expiracion', 'Descuento', 'Cantidad']
+    dataProducts = dr.readTiposProducto()
+    dataInventory = dr.readProductos()
 
-    table = sg.Table(values=data,
-                     headings=headings,
+    tableProducts = sg.Table(values=dataProducts,
+                     headings=headingsProducts,
                      auto_size_columns=False,
                      max_col_width=20,
                      def_col_width=20,
@@ -91,30 +93,50 @@ def mainWindow():
                      justification='center',
                      enable_events=True,
                      select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                     key='-TABLE-',
+                     key='-TABLE_P-',
                      row_height=35)
 
-    tabProductsLayout = [[sg.InputText(key='-INPUT-'),
-                          sg.Button('Buscar', key='_SEARCH_'),
-                          sg.Button('Agregar', key='_ADD_'),
-                          sg.Button('Eliminar', key='_DELETE_'),
-                          sg.Button('Editar', key='_EDIT_')],
-                         [table]
+    tableInventory = sg.Table(values=dataInventory,
+                     headings=headingsInventory,
+                     auto_size_columns=False,
+                     max_col_width=20,
+                     def_col_width=20,
+                     # col_widths=60,
+                     display_row_numbers=False,
+                     justification='center',
+                     enable_events=True,
+                     select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+                     key='-TABLE_I-',
+                     row_height=35)
+
+    
+
+    tabProductsLayout = [[sg.InputText(key='-INPUT_P-'),
+                          sg.Button('Buscar', key='_SEARCH_P_'),
+                          sg.Button('Agregar', key='_ADD_P_'),
+                          sg.Button('Eliminar', key='_DELETE_P_'),
+                          sg.Button('Editar', key='_EDIT_P_')],
+                         [tableProducts]
                          ]
-    tabInventory = [[sg.InputText(key='-INPUT-'),
-                     sg.Button('Buscar', key='_SEARCH_'),
-                     sg.Button('Agregar', key='_ADD_'),
-                     sg.Button('Eliminar', key='_DELETE_'),
-                     sg.Button('Editar', key='_EDIT_')],
-                    [table]
-                    ]
+
+    tabInventoryLayout = [[sg.InputText(key='-INPUT_I-'),
+                           sg.Button('Buscar', key='_SEARCH_I_'),
+                           sg.Button('Agregar', key='_ADD_I_'),
+                           sg.Button('Eliminar', key='_DELETE_I_'),
+                           sg.Button('Editar', key='_EDIT_I_')],
+                          [tableInventory]
+                          ]
 
     tabSalesLayout = [[sg.Text("Ventas")]]
 
     layout = [
-        [sg.TabGroup([[sg.Tab('Productos', tabProductsLayout), sg.Tab('Ventas', tabSalesLayout)]])]]
+        [sg.TabGroup([[sg.Tab('Productos', tabProductsLayout),
+                       sg.Tab('Inventario', tabInventoryLayout),
+                       sg.Tab('Ventas', tabSalesLayout)]])]]
 
-    window = sg.Window('Ventana Principal', layout, font='Courier 12')
+    window = sg.Window('Ventana Principal', layout,
+                       font='Courier 12', finalize=True)
+    window['-INPUT_P-'].bind("<Return>", "_Enter")
     dataSelected = []
 
     while True:
@@ -122,24 +144,23 @@ def mainWindow():
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-        elif event == '_SEARCH_':
-            if values['-INPUT-'] == '':
-                data = dr.readTiposProducto()
+        elif event == '_SEARCH_P_' or event == "-INPUT_P-" + "_Enter":
+            if values['-INPUT_P-'] == '':
+                dataProducts = dr.readTiposProducto()
             else:
-                data = dr.readTiposProductoN(values['-INPUT-'])
-            window['-TABLE-'].update(data)
-        elif event == '_ADD_':
+                dataProducts = dr.readTiposProductoN(values['-INPUT_P-'])
+            window['-TABLE_P-'].update(dataProducts)
+        elif event == '_ADD_P_':
             de.insertTipoProducto()
-        elif event == '_DELETE_':
+        elif event == '_DELETE_P_':
             input = sg.popup_get_text('Digite el nombre del producto o su codigo de barras.\n' +
-                                      'PRECAUCION: Si hay mas de un producto con este nombre o codigo, todos seran eliminados.\n' +
-                                      'Ademas, no se podra eliminar el producto si aun hay en el inventario.')
+                                      'Nota: no se podra eliminar el producto si aun hay en el inventario.')
             print(input)
             if input != None:
                 dd.removeTipoProducto(input)
-        elif event == '-TABLE-':
-            dataSelected = [data[row] for row in values[event]]
-        elif event == '_EDIT_' and dataSelected != []:
+        elif event == '-TABLE_P-':
+            dataSelected = [dataProducts[row] for row in values[event]]
+        elif event == '_EDIT_P_' and dataSelected != []:
             print(dataSelected)
             de.editTipoProducto(dataSelected[0])
 
@@ -147,7 +168,8 @@ def mainWindow():
 
 
 # Validar que no se elimine si hay en inventario
-# Hacer inventario
+# Agregar elementos a inventario
 # Hacer boton de editar
-#
+# Validar que no existan productos con el mismo codigo
+
 mainWindow()
