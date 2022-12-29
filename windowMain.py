@@ -1,8 +1,10 @@
 from tkinter.simpledialog import askfloat
 import PySimpleGUI as sg
 import databaseRead as dr
-import databaseEdit as de
+import databaseInsert as di
 import databaseDelete as dd
+import databaseEdit as de
+import operator
 
 sg.theme("DarkTanBlue")
 
@@ -76,6 +78,20 @@ sg.theme("DarkTanBlue")
 
 #     window.close()
 
+def sort_table(table, cols):
+    """ sort a table by multiple columns
+        table: a list of lists (or tuple of tuples) where each inner list
+               represents a row
+        cols:  a list (or tuple) specifying the column numbers to sort by
+               e.g. (1,0) would sort by column 1, then by column 0
+    """
+    for col in reversed(cols):
+        try:
+            table = sorted(table, key=operator.itemgetter(col))
+        except Exception as e:
+            sg.popup_error('Error in sort_table', 'Exception in sort_table', e)
+    return table
+
 def mainWindow():
 
     headingsProducts = ['Nombre', 'Precio',  '%' + ' Ganancia', 'Ganancia', 'Codigo']
@@ -83,7 +99,7 @@ def mainWindow():
     dataProducts = dr.readTiposProducto()
     dataInventory = dr.readProductos()
 
-    tableProducts = sg.Table(values=dataProducts,
+    tableProducts = sg.Table(values=dataProducts[1:][:],
                      headings=headingsProducts,
                      auto_size_columns=False,
                      max_col_width=20,
@@ -92,6 +108,7 @@ def mainWindow():
                      display_row_numbers=False,
                      justification='center',
                      enable_events=True,
+                     enable_click_events=True,
                      select_mode=sg.TABLE_SELECT_MODE_BROWSE,
                      key='-TABLE_P-',
                      row_height=35)
@@ -105,6 +122,7 @@ def mainWindow():
                      display_row_numbers=False,
                      justification='center',
                      enable_events=True,
+                     enable_click_events=True,
                      select_mode=sg.TABLE_SELECT_MODE_BROWSE,
                      key='-TABLE_I-',
                      row_height=35)
@@ -144,6 +162,15 @@ def mainWindow():
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
+        if isinstance(event, tuple):
+        # TABLE CLICKED Event has value in format ('-TABLE=', '+CLICKED+', (row,col))
+            if event[0] == '-TABLE_P-':
+                print("Entro")
+                if event[2][0] == -1 and event[2][1] != -1:           # Header was clicked and wasn't the "row" column
+                    col_num_clicked = event[2][1]
+                    new_table = sort_table(dataProducts[1:][:],(col_num_clicked, 0))
+                    window['-TABLE_P-'].update(new_table)
+                    dataProducts = [dataProducts[0]] + new_table
         elif event == '_SEARCH_P_' or event == "-INPUT_P-" + "_Enter":
             if values['-INPUT_P-'] == '':
                 dataProducts = dr.readTiposProducto()
@@ -151,7 +178,7 @@ def mainWindow():
                 dataProducts = dr.readTiposProductoN(values['-INPUT_P-'])
             window['-TABLE_P-'].update(dataProducts)
         elif event == '_ADD_P_':
-            de.insertTipoProducto()
+            di.insertTipoProducto()
         elif event == '_DELETE_P_':
             input = sg.popup_get_text('Digite el nombre del producto o su codigo de barras.\n' +
                                       'Nota: no se podra eliminar el producto si aun hay en el inventario.')
@@ -163,6 +190,14 @@ def mainWindow():
         elif event == '_EDIT_P_' and dataSelected != []:
             print(dataSelected)
             de.editTipoProducto(dataSelected[0])
+        elif event == '_SEARCH_I_' or event == "-INPUT_I-" + "_Enter":
+            if values['-INPUT_I-'] == '':
+                dataInventory = dr.readProductos()
+            else:
+                dataInventory = dr.readProductosN(values['-INPUT_I-'])
+            window['-TABLE_I-'].update(dataInventory)
+        elif event == '_ADD_I_':
+            di.insertProducto()
 
     window.close()
 
@@ -171,5 +206,6 @@ def mainWindow():
 # Agregar elementos a inventario
 # Hacer boton de editar
 # Validar que no existan productos con el mismo codigo
-
+# Probar funcionamiento de unique en codigo de barras y nombre
+# Arreglar sort
 mainWindow()

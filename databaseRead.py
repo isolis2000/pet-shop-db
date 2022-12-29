@@ -1,20 +1,11 @@
 from os import read
-import sqlite3
+import databaseUtil as dg
 
 database = 'Pet-shop.db'
 
 
-def execQuery(s):
-    connection = sqlite3.connect(database)
-    c = connection.cursor()
-    c.execute(s)
-    data = c.fetchall()
-    connection.close()
-    return data
-
-
 def readTiposProducto():
-    data = execQuery("""
+    data = dg.execQuery("""
         SELECT 
             nombre, 
             precio, 
@@ -39,7 +30,7 @@ def readTiposProducto():
 
 
 def readTiposProductoN(input: str):
-    data = execQuery("""
+    data = dg.execQuery("""
     SELECT 
         nombre, 
         precio, 
@@ -60,7 +51,7 @@ def readTiposProductoN(input: str):
 
 
 def findTipoProductoId(codigoBarras: str):
-    data = execQuery("""
+    data = dg.execQuery("""
     SELECT 
         id 
     FROM 
@@ -72,7 +63,7 @@ def findTipoProductoId(codigoBarras: str):
 
 
 def readProductos():
-    data = execQuery("""
+    data = dg.execQuery("""
         SELECT 
             TP.nombre, 
             P.fechaCompra, 
@@ -86,13 +77,13 @@ def readProductos():
     # print(data)
     retData = []
     for row in data:
-        newRow = (row[0], row[1], row[2], str(row[3])+"%" + row[4])
+        newRow = (row[0], row[1], row[2], str(row[3]) + "%", row[4])
         # print(newRow)
         retData.append(newRow)
     return retData
 
 def readProductosN(input: str):
-    data = execQuery("""
+    data = dg.execQuery("""
         SELECT 
             TP.nombre, 
             P.fechaCompra, 
@@ -103,18 +94,19 @@ def readProductosN(input: str):
             TiposProducto AS TP
             INNER JOIN Productos AS P ON TP.id = P.idTipoProducto
         WHERE
-            TP.nombre = '""" + input + "'")
+            TP.nombre = '""" + input + "'" +
+            "OR TP.codigoBarras = '" + input + "'")
     # print(data)
     retData = []
     for row in data:
-        newRow = (row[0], row[1], row[2], str(row[3])+"%" + row[4])
+        newRow = (row[0], row[1], row[2], str(row[3])+"%", row[4])
         # print(newRow)
         retData.append(newRow)
     return retData
 
 
 def readErrores():
-    data = execQuery('SELECT * FROM Errores')
+    data = dg.execQuery('SELECT * FROM Errores')
     print("\ndatos: ")
     print(data)
 

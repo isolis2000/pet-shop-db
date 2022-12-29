@@ -21,10 +21,10 @@ def createTiposProducto(cursor):
 
     command = """ CREATE TABLE TiposProducto (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT NOT NULL,
+                    nombre TEXT NOT NULL UNIQUE,
                     precio REAL NOT NULL,
                     ganancia REAL NOT NULL,
-                    codigoBarras char(13) NOT NULL
+                    codigoBarras char(13) NOT NULL UNIQUE
     ); """
 
     cursor.execute(command)
