@@ -1,5 +1,5 @@
 # from databaseInsert import insertarTipoProducto
-from databaseWrite import createAll
+# from databaseWrite import createAll
 # from table import displayTiposProducto
 
 # databaseWrite.createTiposProducto()

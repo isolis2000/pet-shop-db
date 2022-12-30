@@ -1,7 +1,10 @@
 import sqlite3
 from PySimpleGUI import popup
+from datetime import datetime
+
 
 dbName = 'Pet-shop.db'
+
 
 def execQuery(s: str):
     data = None
@@ -20,11 +23,25 @@ def execQuery(s: str):
             print("the sqlite connection is closed")
             return data
 
+
+def insertRegistro(message: str):
+    queryStr = ("""
+    INSERT INTO Registro (
+        fecha,
+        mensaje)
+    VALUES ('""" +
+                datetime.today().strftime('%Y-%m-%d') + "', '" +
+                message + "')")
+    print(queryStr)
+    execQuery(queryStr)
+
+
 def verifyDict(dictionary: dict):
     for key in dictionary:
         if dictionary[key] == None:
             return False
     return True
+
 
 def popupMessage(message: str):
     popup(message)

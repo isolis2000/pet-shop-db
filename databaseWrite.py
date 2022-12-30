@@ -6,7 +6,10 @@ def createAll():
         cursor = connection.cursor()
         createTiposProducto(cursor)
         createProductos(cursor)
-        createBitacora(cursor)
+        createClientes(cursor)
+        createCompras(cursor)
+        createCompras_Productos(cursor)
+        createRegistro(cursor)
         createErrores(cursor)
     except sqlite3.Error as error:
         print("Failed to connect with sqlite3 database", error)
@@ -47,17 +50,57 @@ def createProductos(cursor):
     cursor.execute(command)
     print("Table Productos successfully created")
 
-def createBitacora(cursor):
-    cursor.execute("DROP TABLE IF EXISTS Bitacora")
+def createClientes(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Clientes")
 
-    command = """ CREATE TABLE Bitacora (
+    command = """ CREATE TABLE Clientes (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    apellido1 TEXT,
+                    apellido2 TEXT,
+                    telefono TEXT
+    ); """
+
+    cursor.execute(command)
+    print("Table Clientes successfully created")
+
+def createCompras(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Compras")
+
+    command = """ CREATE TABLE Compras (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    fecha TEXT NOT NULL
+    ); """
+
+    cursor.execute(command)
+    print("Table Compras successfully created")
+
+
+def createCompras_Productos(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Compras_Productos")
+
+    command = """ CREATE TABLE Compras_Productos (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    idCompra INTEGER NOT NULL,
+                    idProducto INTEGER NOT NULL,
+                    FOREIGN KEY (idCompra) REFERENCES Productos(id),
+                    FOREIGN KEY (idProducto) REFERENCES Compras(id)
+    ); """
+
+    cursor.execute(command)
+    print("Table Compras_Productos successfully created")
+
+def createRegistro(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Registro")
+
+    command = """ CREATE TABLE Registro (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     fecha TEXT NOT NULL,
                     mensaje TEXT NOT NULL
     ); """
 
     cursor.execute(command)
-    print("Table Bitacora successfully created")
+    print("Table Registro successfully created")
 
 
 def createErrores(cursor):
@@ -71,3 +114,5 @@ def createErrores(cursor):
 
     cursor.execute(command)
     print("Table Errores successfully created")
+
+createAll()

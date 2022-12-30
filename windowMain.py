@@ -78,7 +78,13 @@ sg.theme("DarkTanBlue")
 
 #     window.close()
 
-def sort_table(table, cols):
+def searchProducts(input):
+    if input == '':
+        return dr.readTiposProducto()
+    else:
+        return dr.readTiposProductoN(input)
+
+def sortTable(table, cols):
     """ sort a table by multiple columns
         table: a list of lists (or tuple of tuples) where each inner list
                represents a row
@@ -89,7 +95,7 @@ def sort_table(table, cols):
         try:
             table = sorted(table, key=operator.itemgetter(col))
         except Exception as e:
-            sg.popup_error('Error in sort_table', 'Exception in sort_table', e)
+            sg.popup_error('Error in sortTable', 'Exception in sortTable', e)
     return table
 
 def mainWindow():
@@ -99,7 +105,7 @@ def mainWindow():
     dataProducts = dr.readTiposProducto()
     dataInventory = dr.readProductos()
 
-    tableProducts = sg.Table(values=dataProducts[1:][:],
+    tableProducts = sg.Table(values=dataProducts,
                      headings=headingsProducts,
                      auto_size_columns=False,
                      max_col_width=20,
@@ -168,27 +174,23 @@ def mainWindow():
                 print("Entro")
                 if event[2][0] == -1 and event[2][1] != -1:           # Header was clicked and wasn't the "row" column
                     col_num_clicked = event[2][1]
-                    new_table = sort_table(dataProducts[1:][:],(col_num_clicked, 0))
+                    dataProducts = searchProducts(values['-INPUT_P-'])
+                    new_table = sortTable(dataProducts,(col_num_clicked, 0))
                     window['-TABLE_P-'].update(new_table)
                     dataProducts = [dataProducts[0]] + new_table
         elif event == '_SEARCH_P_' or event == "-INPUT_P-" + "_Enter":
-            if values['-INPUT_P-'] == '':
-                dataProducts = dr.readTiposProducto()
-            else:
-                dataProducts = dr.readTiposProductoN(values['-INPUT_P-'])
+            dataProducts = searchProducts(values['-INPUT_P-'])
             window['-TABLE_P-'].update(dataProducts)
         elif event == '_ADD_P_':
             di.insertTipoProducto()
         elif event == '_DELETE_P_':
             input = sg.popup_get_text('Digite el nombre del producto o su codigo de barras.\n' +
                                       'Nota: no se podra eliminar el producto si aun hay en el inventario.')
-            print(input)
             if input != None:
                 dd.removeTipoProducto(input)
         elif event == '-TABLE_P-':
             dataSelected = [dataProducts[row] for row in values[event]]
         elif event == '_EDIT_P_' and dataSelected != []:
-            print(dataSelected)
             de.editTipoProducto(dataSelected[0])
         elif event == '_SEARCH_I_' or event == "-INPUT_I-" + "_Enter":
             if values['-INPUT_I-'] == '':
@@ -203,9 +205,9 @@ def mainWindow():
 
 
 # Validar que no se elimine si hay en inventario
-# Agregar elementos a inventario
 # Hacer boton de editar
+
 # Validar que no existan productos con el mismo codigo
 # Probar funcionamiento de unique en codigo de barras y nombre
-# Arreglar sort
+
 mainWindow()

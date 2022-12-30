@@ -3,8 +3,6 @@ import databaseRead as dr
 import databaseUtil as du
 
 
-# --------------------------------------------- INSERTS ---------------------------------------------
-
 def insertTipoProducto():
 
     dictTipos = we.newTipoProducto()
@@ -28,14 +26,20 @@ def insertTipoProducto():
                 ganancia, 
                 codigoBarras) 
             VALUES ('""" +
-                dictTipos['nombre'] + "', " +
-                str(float(dictTipos['precio']) + float(dictTipos['precio'])
-                    * float(dictTipos['ganancia'])/100) + ", " +
-                str(float(dictTipos['precio']) *
-                    float(dictTipos['ganancia'])/100) + ", '" +
-                dictTipos['codigoBarras'] + "')")
+                    dictTipos['nombre'] + "', " +
+                    str(float(dictTipos['precio']) + float(dictTipos['precio'])
+                        * float(dictTipos['ganancia'])/100) + ", " +
+                    str(float(dictTipos['precio']) *
+                        float(dictTipos['ganancia'])/100) + ", '" +
+                    dictTipos['codigoBarras'] + "')")
         print(queryStr)
         if du.execQuery(queryStr) != None:
+            registryStr = ("Se inserto un nuevo tipo de producto con los siguientes datos: \n\t" +
+            "nombre: " + dictTipos['nombre'] + "\n\t" +
+            "precio: " + str(dictTipos['precio']) + "\n\t" +
+            "ganancia: " + str(dictTipos['ganancia']) + "\n\t" + 
+            "codigo de barras: " + dictTipos['codigoBarras'])
+            du.insertRegistro(registryStr)
             du.popupMessage("Producto insertado de manera exitosa")
         else:
             du.popupMessage("Producto no se pudo insertar")
@@ -59,19 +63,21 @@ def insertProducto():
                     cantidad,
                     idTipoProducto)
                 VALUES ('""" +
-                    dictProduct['buyDate'] + "', '" +
-                    dictProduct['expirationDate'] + "', " +
-                    dictProduct['discount'] + ", " +
-                    dictProduct['ammount'] + ", " +
-                    str(idTipoProducto) + ")")
+                        dictProduct['buyDate'] + "', '" +
+                        dictProduct['expirationDate'] + "', " +
+                        dictProduct['discount'] + ", " +
+                        dictProduct['ammount'] + ", " +
+                        str(idTipoProducto) + ")")
             print(queryStr)
             if du.execQuery(queryStr) != None:
                 du.popupMessage(
                     "Producto agregado al inventario de manera exitosa")
             else:
-                du.popupMessage("Producto no se pudo agregar debido a un fallo en la base de datos")
+                du.popupMessage(
+                    "Producto no se pudo agregar debido a un fallo en la base de datos")
         else:
             du.popupMessage(
                 "Producto no se pudo agregar, favor verifique que exista este tipo de producto y que el codigo este correcto.")
     else:
-        du.popupMessage("Datos ingresados de manera incorrecta, favor verifique que todas las casillas esten llenas con lo que se pide")
+        du.popupMessage(
+            "Datos ingresados de manera incorrecta, favor verifique que todas las casillas esten llenas con lo que se pide")
