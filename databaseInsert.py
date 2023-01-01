@@ -51,8 +51,9 @@ def insertTipoProducto():
 def insertProducto():
 
     dictProduct = we.newProducto()
-    print(dictProduct)
-    if du.verifyDict(dictProduct):
+    if dictProduct == 'Cancel':
+        du.popupMessage("Operacion cancelada")
+    elif du.verifyDict(dictProduct):
         idTipoProducto = dr.findTipoProductoId(dictProduct['productCode'])
         if idTipoProducto != None:
             queryStr = ("""
