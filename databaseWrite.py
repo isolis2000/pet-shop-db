@@ -19,6 +19,18 @@ def createAll():
             connection.close()
             print("the sqlite connection is closed")
 
+def createProveedores(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Proveedores")
+
+    command = """ CREATE TABLE Proveedores (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL UNIQUE,
+                    telefono INTEGER
+    ); """
+
+    cursor.execute(command)
+    print("Table Proveedores successfully created")
+
 def createTiposProducto(cursor):
     cursor.execute("DROP TABLE IF EXISTS TiposProducto")
 
@@ -27,7 +39,10 @@ def createTiposProducto(cursor):
                     nombre TEXT NOT NULL UNIQUE,
                     precio REAL NOT NULL,
                     ganancia REAL NOT NULL,
-                    codigoBarras char(13) NOT NULL UNIQUE
+                    descuento REAL NOT NULL,
+                    codigoBarras char(13) NOT NULL UNIQUE,
+                    idProveedor INTEGER,
+                    FOREIGN KEY (idProveedor) REFERENCES Proveedores(id)
     ); """
 
     cursor.execute(command)
@@ -41,7 +56,6 @@ def createProductos(cursor):
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     fechaCompra NUMERIC NOT NULL,
                     fechaVencimiento NUMERIC NOT NULL,
-                    descuento REAL NOT NULL,
                     cantidad INTEGER NOT NULL,
                     idTipoProducto char(13) NOT NULL,
                     FOREIGN KEY (idTipoProducto) REFERENCES TiposProducto(id)

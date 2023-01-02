@@ -203,10 +203,12 @@ def mainWindow():
 
     window.close()
 
+# URGENTE!!!!!!!!!
+# Descuento -> TiposProducto
+# Proveedores
 
 # Validar que no se elimine si hay en inventario
 # Hacer boton de editar
-
 # Validar que no existan productos con el mismo codigo
 # Probar funcionamiento de unique en codigo de barras y nombre
 
