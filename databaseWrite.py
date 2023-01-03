@@ -39,7 +39,6 @@ def createTiposProducto(cursor):
                     nombre TEXT NOT NULL UNIQUE,
                     precio REAL NOT NULL,
                     ganancia REAL NOT NULL,
-                    descuento REAL NOT NULL,
                     codigoBarras char(13) NOT NULL UNIQUE,
                     idProveedor INTEGER,
                     FOREIGN KEY (idProveedor) REFERENCES Proveedores(id)
@@ -56,6 +55,7 @@ def createProductos(cursor):
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     fechaCompra NUMERIC NOT NULL,
                     fechaVencimiento NUMERIC NOT NULL,
+                    descuento REAL NOT NULL,
                     cantidad INTEGER NOT NULL,
                     idTipoProducto char(13) NOT NULL,
                     FOREIGN KEY (idTipoProducto) REFERENCES TiposProducto(id)

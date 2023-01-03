@@ -84,6 +84,7 @@ def searchProducts(input):
     else:
         return dr.readTiposProductoN(input)
 
+
 def sortTable(table, cols):
     """ sort a table by multiple columns
         table: a list of lists (or tuple of tuples) where each inner list
@@ -98,42 +99,43 @@ def sortTable(table, cols):
             sg.popup_error('Error in sortTable', 'Exception in sortTable', e)
     return table
 
+
 def mainWindow():
 
-    headingsProducts = ['Nombre', 'Precio',  '%' + ' Ganancia', 'Ganancia', 'Codigo']
-    headingsInventory = ['Nombre', 'Compra', 'Expiracion', 'Descuento', 'Cantidad']
+    headingsProducts = ['Nombre', 'Precio',
+                        '%' + ' Ganancia', 'Ganancia', 'Codigo']
+    headingsInventory = ['Nombre', 'Compra',
+                         'Expiracion', 'Descuento', 'Cantidad']
     dataProducts = dr.readTiposProducto()
     dataInventory = dr.readProductos()
 
     tableProducts = sg.Table(values=dataProducts,
-                     headings=headingsProducts,
-                     auto_size_columns=False,
-                     max_col_width=20,
-                     def_col_width=20,
-                     # col_widths=60,
-                     display_row_numbers=False,
-                     justification='center',
-                     enable_events=True,
-                     enable_click_events=True,
-                     select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                     key='-TABLE_P-',
-                     row_height=35)
+                             headings=headingsProducts,
+                             auto_size_columns=False,
+                             max_col_width=20,
+                             def_col_width=20,
+                             # col_widths=60,
+                             display_row_numbers=False,
+                             justification='center',
+                             enable_events=True,
+                             enable_click_events=True,
+                             select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+                             key='-TABLE_P-',
+                             row_height=35)
 
     tableInventory = sg.Table(values=dataInventory,
-                     headings=headingsInventory,
-                     auto_size_columns=False,
-                     max_col_width=20,
-                     def_col_width=20,
-                     # col_widths=60,
-                     display_row_numbers=False,
-                     justification='center',
-                     enable_events=True,
-                     enable_click_events=True,
-                     select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                     key='-TABLE_I-',
-                     row_height=35)
-
-    
+                              headings=headingsInventory,
+                              auto_size_columns=False,
+                              max_col_width=20,
+                              def_col_width=20,
+                              # col_widths=60,
+                              display_row_numbers=False,
+                              justification='center',
+                              enable_events=True,
+                              enable_click_events=True,
+                              select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+                              key='-TABLE_I-',
+                              row_height=35)
 
     tabProductsLayout = [[sg.InputText(key='-INPUT_P-'),
                           sg.Button('Buscar', key='_SEARCH_P_'),
@@ -151,7 +153,10 @@ def mainWindow():
                           [tableInventory]
                           ]
 
-    tabSalesLayout = [[sg.Text("Ventas")]]
+    tabSalesLayout = [[sg.Text("Codigo: "), sg.InputText(key='-INPUT_V-')],
+                      [sg.Text("Descripcion: "), sg.Text("", key='-PRODUCT_V-')],
+                      [sg.Text("Cantidad: "), sg.InputText("1", key='-AMMOUNT_V-'), sg.Button("+", key='_ADD_AMMOUNT_V_')]
+                      ]
 
     layout = [
         [sg.TabGroup([[sg.Tab('Productos', tabProductsLayout),
@@ -169,13 +174,14 @@ def mainWindow():
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if isinstance(event, tuple):
-        # TABLE CLICKED Event has value in format ('-TABLE=', '+CLICKED+', (row,col))
+            # TABLE CLICKED Event has value in format ('-TABLE=', '+CLICKED+', (row,col))
             if event[0] == '-TABLE_P-':
                 print("Entro")
-                if event[2][0] == -1 and event[2][1] != -1:           # Header was clicked and wasn't the "row" column
+                # Header was clicked and wasn't the "row" column
+                if event[2][0] == -1 and event[2][1] != -1:
                     col_num_clicked = event[2][1]
                     dataProducts = searchProducts(values['-INPUT_P-'])
-                    new_table = sortTable(dataProducts,(col_num_clicked, 0))
+                    new_table = sortTable(dataProducts, (col_num_clicked, 0))
                     window['-TABLE_P-'].update(new_table)
                     dataProducts = [dataProducts[0]] + new_table
         elif event == '_SEARCH_P_' or event == "-INPUT_P-" + "_Enter":
@@ -200,11 +206,14 @@ def mainWindow():
             window['-TABLE_I-'].update(dataInventory)
         elif event == '_ADD_I_':
             di.insertProducto()
+        elif event == '_ADD_AMMOUNT_V_':
+            ammount = int(values['-AMMOUNT_V-']) + 1
+            window['-AMMOUNT_V-'].update(str(ammount))
+
 
     window.close()
 
-# URGENTE!!!!!!!!!
-# Descuento -> TiposProducto
+
 # Proveedores
 
 # Validar que no se elimine si hay en inventario
