@@ -3,35 +3,35 @@ import databaseRead as dr
 import databaseUtil as du
 
 
-def editTipoProducto(dataSelected):
+def edit_tipo_producto(dataSelected):
 
-    id = dr.findTipoProductoId(dataSelected[4])
-    dictTipos = we.editTipoProducto(dataSelected)
+    id = dr.find_tipo_producto_id(dataSelected[4])
+    dict_tipos = we.edit_tipo_producto(dataSelected)
 
-    if dictTipos == 'Cancel':
-        du.popupMessage("Operacion cancelada")
-    elif du.verifyDict(dictTipos):
-        print(dictTipos)
-        print("NOMBRE: " + dictTipos['nombre'])
+    if dict_tipos == 'Cancel':
+        du.popup_message("Operacion cancelada")
+    elif du.verify_dict(dict_tipos):
+        print(dict_tipos)
+        print("NOMBRE: " + dict_tipos['nombre'])
 
         # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        # (dictTipos['nombre'], dictTipos['precio'], dictTipos['ganancia'], dictTipos['codigoBarras'])
+        # (dict_tipos['nombre'], dict_tipos['precio'], dict_tipos['ganancia'], dict_tipos['codigoBarras'])
 
-        strExec = ("UPDATE TiposProducto SET " +
-                    "nombre = '" + dictTipos['nombre'] + "', "
-                    "precio = " + str(float(dictTipos['precio']) + float(
-                        dictTipos['precio']) * float(dictTipos['ganancia'])/100) + ", "
+        str_exec = ("UPDATE TiposProducto SET " +
+                    "nombre = '" + dict_tipos['nombre'] + "', "
+                    "precio = " + str(float(dict_tipos['precio']) + float(
+                        dict_tipos['precio']) * float(dict_tipos['ganancia'])/100) + ", "
                     "ganancia = " +
-                    str(float(dictTipos['precio']) *
-                        float(dictTipos['ganancia'])/100) + ", "
-                    "codigoBarras = '" + dictTipos['codigoBarras'] + "' "
+                    str(float(dict_tipos['precio']) *
+                        float(dict_tipos['ganancia'])/100) + ", "
+                    "codigoBarras = '" + dict_tipos['codigoBarras'] + "' "
                     "WHERE id = " + str(id))
-        print(strExec)
+        print(str_exec)
 
-        if du.execQuery(strExec) != None:
-            du.popupMessage("Producto editado exitosamente")
+        if du.exec_query(str_exec) != None:
+            du.popup_message("Producto editado exitosamente")
         else:
-            du.popupMessage("Producto no se pudo editar correctamente. Favor verifique conexion con la base de datos.")
+            du.popup_message("Producto no se pudo editar correctamente. Favor verifique conexion con la base de datos.")
     else:
-        du.popupMessage(
+        du.popup_message(
             "Datos ingresados de manera incorrecta, favor verifique que todas las casillas esten llenas con lo que se pide")

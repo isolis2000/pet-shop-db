@@ -1,10 +1,10 @@
 import PySimpleGUI as sg
-from databaseRead import readTiposProducto
+from databaseRead import read_tipos_producto
 
-def displayTiposProducto():
+def display_tipos_producto():
     headings = ['Producto', 'Precio', 'Ganancia %', 'Ganancia', 'Codigo de Barras']
 
-    data = readTiposProducto()
+    data = read_tipos_producto()
 
     layout = [[sg.Table(data, headings=headings, justification='center', key='-TABLE-')],]
     window = sg.Window("Title", layout, finalize=True)
@@ -17,4 +17,4 @@ def displayTiposProducto():
 
     window.close()
 
-# displayTiposProducto()
+# display_tipos_producto()

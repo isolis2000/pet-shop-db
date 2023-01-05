@@ -1,12 +1,12 @@
 import sqlite3
-from PySimpleGUI import popup
+import PySimpleGUI as sg
 from datetime import datetime
 
 
 dbName = 'Pet-shop.db'
 
 
-def execQuery(s: str):
+def exec_query(s: str):
     data = None
     try:
         connection = sqlite3.connect(dbName)
@@ -24,24 +24,27 @@ def execQuery(s: str):
             return data
 
 
-def insertRegistro(message: str):
-    queryStr = ("""
+def insert_registro(message: str):
+    query_str = ("""
     INSERT INTO Registro (
         fecha,
         mensaje)
     VALUES ('""" +
                 datetime.today().strftime('%Y-%m-%d') + "', '" +
                 message + "')")
-    print(queryStr)
-    execQuery(queryStr)
+    print(query_str)
+    exec_query(query_str)
 
 
-def verifyDict(dictionary: dict):
+def verify_dict(dictionary: dict):
     for key in dictionary:
         if dictionary[key] == None:
             return False
     return True
 
 
-def popupMessage(message: str):
-    popup(message)
+def popup_message(message: str):
+    sg.popup(message)
+
+def popup_input(message: str) -> str:
+    return sg.popup_get_text(message, default_text="1", size=(len(message)+1))
