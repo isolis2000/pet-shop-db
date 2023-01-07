@@ -3,7 +3,7 @@ import PySimpleGUI as sg
 from datetime import datetime
 
 
-dbName = 'Pet-shop.db'
+dbName = "Pet-shop.db"
 
 
 def exec_query(s: str):
@@ -25,13 +25,15 @@ def exec_query(s: str):
 
 
 def insert_registro(message: str):
-    query_str = ("""
+    query_str = f"""
     INSERT INTO Registro (
         fecha,
         mensaje)
-    VALUES ('""" +
-                datetime.today().strftime('%Y-%m-%d') + "', '" +
-                message + "')")
+    VALUES (
+        '{datetime.today().strftime("%Y-%m-%d")}',
+        '{message}'
+        )
+    """
     print(query_str)
     exec_query(query_str)
 
@@ -46,5 +48,6 @@ def verify_dict(dictionary: dict):
 def popup_message(message: str):
     sg.popup(message)
 
+
 def popup_input(message: str) -> str:
-    return sg.popup_get_text(message, default_text="1", size=(len(message)+1))
+    return sg.popup_get_text(message, default_text="1", size=(len(message) + 1))

@@ -1,8 +1,9 @@
 import sqlite3
 
+
 def create_all():
     try:
-        connection = sqlite3.connect('Pet-shop.db')
+        connection = sqlite3.connect("Pet-shop.db")
         cursor = connection.cursor()
         create_proveedores(cursor)
         create_tipos_producto(cursor)
@@ -20,6 +21,7 @@ def create_all():
             connection.close()
             print("the sqlite connection is closed")
 
+
 def create_proveedores(cursor):
     cursor.execute("DROP TABLE IF EXISTS Proveedores")
 
@@ -31,6 +33,7 @@ def create_proveedores(cursor):
 
     cursor.execute(command)
     print("Table Proveedores successfully created")
+
 
 def create_tipos_producto(cursor):
     cursor.execute("DROP TABLE IF EXISTS TiposProducto")
@@ -65,6 +68,7 @@ def create_productos(cursor):
     cursor.execute(command)
     print("Table Productos successfully created")
 
+
 def create_clientes(cursor):
     cursor.execute("DROP TABLE IF EXISTS Clientes")
 
@@ -79,6 +83,7 @@ def create_clientes(cursor):
     cursor.execute(command)
     print("Table Clientes successfully created")
 
+
 def create_compras(cursor):
     cursor.execute("DROP TABLE IF EXISTS Compras")
 
@@ -86,7 +91,7 @@ def create_compras(cursor):
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     fecha TEXT NOT NULL,
                     estado TEXT NOT NULL
-    ); """ # resultados: En Progreso, Exitosa, Cancelada
+    ); """  # resultados: En Progreso, Exitosa, Cancelada
 
     cursor.execute(command)
     print("Table Compras successfully created")
@@ -106,6 +111,7 @@ def create_compras_productos(cursor):
 
     cursor.execute(command)
     print("Table Compras_Productos successfully created")
+
 
 def create_registro(cursor):
     cursor.execute("DROP TABLE IF EXISTS Registro")
@@ -131,5 +137,6 @@ def create_errores(cursor):
 
     cursor.execute(command)
     print("Table Errores successfully created")
+
 
 create_all()
