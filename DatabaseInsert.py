@@ -45,7 +45,6 @@ def insert_tipo_producto():
                     codigo de barras: {dict_tipos["codigoBarras"]}
                 """
             du.insert_registro(registry_str)
-            du.popup_message("Producto insertado de manera exitosa")
         else:
             du.popup_message("Producto no se pudo insertar")
     else:
@@ -76,9 +75,7 @@ def insert_producto():
                 {str(id_tipo_producto)})
             """
             print(query_str)
-            if du.exec_query(query_str) != None:
-                du.popup_message("Producto agregado al inventario de manera exitosa")
-            else:
+            if du.exec_query(query_str) == None:
                 du.popup_message(
                     "Producto no se pudo agregar debido a un fallo en la base de datos"
                 )
@@ -92,8 +89,9 @@ def insert_producto():
         )
 
 
-def add_to_venta(input: str, empty=False):
+def add_to_venta(empty=False):
 
+    input = du.popup_input("Digite el código del producto")
     products_list = dr.read_productos_n(input)
 
     if products_list == []:
@@ -107,7 +105,8 @@ def add_to_venta(input: str, empty=False):
                     estado)
                 VALUES (
                     '{datetime.datetime.today().strftime('%Y-%m-%d')}',
-                    'En Progreso')"""
+                    'En Progreso')
+        """
         du.exec_query(query_str)
         print(query_str)
 
@@ -117,7 +116,7 @@ def add_to_venta(input: str, empty=False):
     if len(products_list) > 1:
         product_to_add = we.popup_select(products_list)
     else:
-        product_to_add = products_list
+        product_to_add = products_list[0]
 
     amount_to_add = du.popup_input("Digite la cantidad")
 

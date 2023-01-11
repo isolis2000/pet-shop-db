@@ -102,8 +102,8 @@ class PDF(FPDF):
             w=0, h=height_per_obj, txt="Subtotal", align="C", border=self.borders, ln=1
         )
 
-        subtotal = 0
-        descuento_total = 0
+        subtotal = 0.0
+        descuento_total = 0.0
         for d in products:
             # subTotalProducto = d['subtotal'] - d['descuento']
             subtotal += d["subtotal"]
@@ -197,17 +197,18 @@ class PDF(FPDF):
         # self.cell(w=0, h=height_per_obj, txt=name, border=self.borders, ln=1)
 
 
-def generate_receipt(amount_of_items: int, date_time: str):
+def generate_receipt(
+    receipt_number: int, client_name: str, products_list: list, date_time: str
+):
+    print(f"RECEIPT: {products_list}")
+    amount_of_items = len(products_list)
     final_height = base_height + amount_of_items * height_per_obj
     pdf = PDF(orientation="P", unit="mm", format=(base_width, final_height))
     pdf.add_page()
     pdf.custom_header()
-    pdf.body(123, "6362-9187", "Macho Peña", test_products)
+    pdf.body(receipt_number, "6362-9187", client_name, products_list)
     pdf.custom_footer(date_time)
     # pdf.lines()
     # pdf.header(modifiedHeight=final_height)
     pdf.output("test.pdf", "F")
     # use_printer('test.pdf')
-
-
-generate_receipt(len(test_products), "27")

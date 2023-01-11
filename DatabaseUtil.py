@@ -46,8 +46,23 @@ def verify_dict(dictionary: dict):
 
 
 def popup_message(message: str):
-    sg.popup(message)
+    sg.popup(
+        message,
+        auto_close=True,
+        auto_close_duration=3,
+        no_titlebar=True,
+        button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
+        any_key_closes=True,
+    )
 
 
 def popup_input(message: str) -> str:
-    return sg.popup_get_text(message, default_text="1", size=(len(message) + 1))
+    return sg.popup_get_text(message, size=(len(message) + 1), no_titlebar=True)
+
+
+def confirmation_popup(message: str) -> bool:
+    ans_str = sg.popup(message, custom_text=("Si", "No"), no_titlebar=True)
+    if ans_str == "Si":
+        return True
+    elif ans_str == "No" or ans_str == None:
+        return False

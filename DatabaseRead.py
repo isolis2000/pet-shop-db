@@ -153,6 +153,15 @@ def read_product_plus_discount(input: str):
     return ret_data
 
 
+def read_product_id(input: str):
+    data = du.exec_query(
+        f"""
+        SELECT 
+            id
+        """
+    )
+
+
 def read_current_sale():
     return du.exec_query(
         """
@@ -161,7 +170,8 @@ def read_current_sale():
             TP.nombre,
             (TP.precio - P.descuento) AS subtotal,
             P.descuento, 
-            TP.codigoBarras
+            TP.codigoBarras,
+            CP.id
         FROM 
             Compras_Productos AS CP
         INNER JOIN 
@@ -188,7 +198,8 @@ def read_current_sale_n(input: str):
             TP.nombre,
             (TP.precio - P.descuento) AS subtotal,
             P.descuento, 
-            TP.codigoBarras
+            TP.codigoBarras,
+            CP.id
         FROM 
             Compras_Productos AS CP
         INNER JOIN 

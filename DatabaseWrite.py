@@ -105,6 +105,7 @@ def create_compras_productos(cursor):
                     idCompra INTEGER NOT NULL,
                     idProducto INTEGER NOT NULL,
                     cantidad INTEGER NOT NULL,
+                    UNIQUE(idCompra, idProducto)
                     FOREIGN KEY (idCompra) REFERENCES Productos(id),
                     FOREIGN KEY (idProducto) REFERENCES Compras(id)
     ); """

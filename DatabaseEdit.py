@@ -1,6 +1,8 @@
 import WindowsEdit as we
 import DatabaseRead as dr
 import DatabaseUtil as du
+import printing as pr
+import datetime
 
 
 def edit_tipo_producto(dataSelected):
@@ -46,5 +48,33 @@ def edit_tipo_producto(dataSelected):
         )
 
 
-def edit_estado_compra():
-    sell_id = dr.read_current_sale_id()
+def edit_sale_prod_quantity(prod_id: int):
+    new_value = du.popup_input("Escriba la nueva cantidad de este producto")
+    str_exec = f"""
+    UPDATE Compras_Productos
+        SET cantidad = {new_value}
+        WHERE id = {prod_id}
+    """
+    du.exec_query(str_exec)
+
+
+def edit_estado_compra(str_state: str):
+    if du.confirmation_popup("¿Seguro que desea finalizar la compra?"):
+
+        curr_sale = dr.read_current_sale()
+        keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
+        res_lst = []
+        for curr_item in curr_sale:
+            res_lst.append(
+                {keys_list[i]: curr_item[i] for i in range(0, len(keys_list))}
+            )
+        today = datetime.datetime.today().strftime("%Y-%m-%d")
+        pr.generate_receipt(123, "Huu", res_lst, today)
+
+        sell_id = dr.read_current_sale_id()
+        str_exec = f"""
+        UPDATE Compras
+            SET estado = '{str_state}'
+            WHERE id = {sell_id}
+        """
+        du.exec_query(str_exec)
