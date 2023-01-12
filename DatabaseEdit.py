@@ -48,6 +48,19 @@ def edit_tipo_producto(dataSelected):
         )
 
 
+def update_inventory_after_sale():
+    sale_lst = dr.read_current_sale()
+    print(f"sale lst: {sale_lst}")
+    for prod in sale_lst:
+        str_exec = f"""
+        UPDATE Productos
+            SET cantidad = cantidad - {prod[0]}
+            WHERE id = {prod[6]}
+        """
+        print(f"exec: {str_exec}")
+        du.exec_query(str_exec)
+
+
 def edit_sale_prod_quantity(prod_id: int):
     new_value = du.popup_input("Escriba la nueva cantidad de este producto")
     str_exec = f"""
@@ -68,7 +81,7 @@ def edit_estado_compra(str_state: str):
             res_lst.append(
                 {keys_list[i]: curr_item[i] for i in range(0, len(keys_list))}
             )
-        today = datetime.datetime.today().strftime("%Y-%m-%d")
+        today = datetime.datetime.today().strftime("%d-%m-%Y")
         pr.generate_receipt(123, "Huu", res_lst, today)
 
         sell_id = dr.read_current_sale_id()

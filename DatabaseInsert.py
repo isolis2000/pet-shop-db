@@ -57,7 +57,7 @@ def insert_producto():
 
     dict_product = we.new_producto()
     if dict_product == "Cancel":
-        du.popup_message("Operacion cancelada")
+        du.popup_message("Operación cancelada")
     elif du.verify_dict(dict_product):
         id_tipo_producto = dr.find_tipo_producto_id(dict_product["productCode"])
         if id_tipo_producto != None:
@@ -92,6 +92,10 @@ def insert_producto():
 def add_to_venta(empty=False):
 
     input = du.popup_input("Digite el código del producto")
+    if input == None:
+        du.popup_message("Operación cancelada")
+        return
+
     products_list = dr.read_productos_n(input)
 
     if products_list == []:
@@ -118,7 +122,16 @@ def add_to_venta(empty=False):
     else:
         product_to_add = products_list[0]
 
-    amount_to_add = du.popup_input("Digite la cantidad")
+    product_quantity = int(product_to_add[4])
+    amount_to_add = 0
+    valid_amount = False
+
+    while not valid_amount:
+        amount_to_add = du.popup_input("Digite la cantidad")
+        if amount_to_add == None:
+            return
+        elif int(amount_to_add) <= product_quantity:
+            valid_amount = True
 
     print(product_to_add)
 

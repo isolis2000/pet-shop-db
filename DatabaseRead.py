@@ -168,10 +168,11 @@ def read_current_sale():
         SELECT  
             CP.Cantidad,
             TP.nombre,
-            (TP.precio - P.descuento) AS subtotal,
+            (TP.precio - P.descuento) * CP.Cantidad AS subtotal,
             P.descuento, 
             TP.codigoBarras,
-            CP.id
+            CP.id,
+            P.id
         FROM 
             Compras_Productos AS CP
         INNER JOIN 

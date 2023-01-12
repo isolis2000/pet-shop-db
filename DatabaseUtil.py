@@ -49,7 +49,7 @@ def popup_message(message: str):
     sg.popup(
         message,
         auto_close=True,
-        auto_close_duration=3,
+        auto_close_duration=1,
         no_titlebar=True,
         button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
         any_key_closes=True,
