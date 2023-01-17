@@ -69,10 +69,25 @@ def create_productos(cursor):
     print("Table Productos successfully created")
 
 
-def create_clientes(cursor):
+def create_clientes(cursor):  # datos por definir
     cursor.execute("DROP TABLE IF EXISTS Clientes")
 
     command = """ CREATE TABLE Clientes (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    apellido1 TEXT,
+                    apellido2 TEXT,
+                    telefono TEXT
+    ); """
+
+    cursor.execute(command)
+    print("Table Clientes successfully created")
+
+
+def create_clientes_peluqueria(cursor):  # datos por definir
+    cursor.execute("DROP TABLE IF EXISTS Peluqueria")
+
+    command = """ CREATE TABLE Peluqueria (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL,
                     apellido1 TEXT,
@@ -90,7 +105,11 @@ def create_compras(cursor):
     command = """ CREATE TABLE Compras (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     fecha TEXT NOT NULL,
-                    estado TEXT NOT NULL
+                    estado TEXT NOT NULL,
+                    totalAPagar REAL NOT NULL,
+                    vuelto REAL NOT NULL,
+                    idCliente INTEGER NOT NULL,
+                    FOREIGN KEY (idCliente) REFERENCES Clientes(id)
     ); """  # resultados: En Progreso, Exitosa, Cancelada
 
     cursor.execute(command)

@@ -5,10 +5,12 @@ import printing as pr
 import datetime
 
 
-def edit_tipo_producto(dataSelected):
+def edit_tipo_producto(data_selected):
 
-    id = dr.find_tipo_producto_id(dataSelected[4])
-    dict_tipos = we.edit_tipo_producto(dataSelected)
+    print(f"data_selected: {data_selected}")
+    id_producto = dr.find_tipo_producto_id(data_selected[4])
+    data_product = dr.read_tipos_producto_n(data_selected[4])
+    dict_tipos = we.edit_tipo_producto(data_product[0], du.iva)
 
     if dict_tipos == "Cancel":
         du.popup_message("Operación cancelada")
@@ -31,7 +33,7 @@ def edit_tipo_producto(dataSelected):
                                 },
                     codigoBarras = '{dict_tipos["codigoBarras"]}'
                 WHERE 
-                    id = {id}
+                    id = {id_producto}
             """
 
         print(str_exec)
@@ -49,7 +51,7 @@ def edit_tipo_producto(dataSelected):
 
 
 def update_inventory_after_sale():
-    sale_lst = dr.read_current_sale()
+    sale_lst = dr.read_current_order()
     print(f"sale lst: {sale_lst}")
     for prod in sale_lst:
         str_exec = f"""
@@ -74,7 +76,7 @@ def edit_sale_prod_quantity(prod_id: int):
 def edit_estado_compra(str_state: str):
     if du.confirmation_popup("¿Seguro que desea finalizar la compra?"):
 
-        curr_sale = dr.read_current_sale()
+        curr_sale = dr.read_current_order()
         keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
         res_lst = []
         for curr_item in curr_sale:
@@ -82,12 +84,13 @@ def edit_estado_compra(str_state: str):
                 {keys_list[i]: curr_item[i] for i in range(0, len(keys_list))}
             )
         today = datetime.datetime.today().strftime("%d-%m-%Y")
+
         pr.generate_receipt(123, "Huu", res_lst, today)
 
-        sell_id = dr.read_current_sale_id()
+        order_id = dr.read_current_sale_id()
         str_exec = f"""
         UPDATE Compras
             SET estado = '{str_state}'
-            WHERE id = {sell_id}
+            WHERE id = {order_id}
         """
         du.exec_query(str_exec)

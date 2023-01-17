@@ -3,13 +3,14 @@ import PySimpleGUI as sg
 from datetime import datetime
 
 
-dbName = "Pet-shop.db"
+db_name = "Pet-shop.db"
+iva = 0.13  # 13%
 
 
 def exec_query(s: str):
     data = None
     try:
-        connection = sqlite3.connect(dbName)
+        connection = sqlite3.connect(db_name)
         c = connection.cursor()
         c.execute(s)
         data = c.fetchall()

@@ -4,9 +4,30 @@ import DatabaseUtil as du
 import datetime
 
 
+def insert_proveedor(name: str):
+    du.exec_query(
+        f"""
+    INSERT INTO Proveedores (
+        nombre
+    )
+    VALUES (
+        '{name}'
+    )
+    """
+    )
+
+
 def insert_tipo_producto():
 
     dict_tipos = we.new_tipo_producto()
+    provider_name = dict_tipos["proveedor"]
+    proveedor_res = dr.find_proveedor_id(provider_name)
+    print(f"proveedor_res: {proveedor_res}")
+    if proveedor_res == []:
+        insert_proveedor(provider_name)
+    id_proveedor = dr.find_proveedor_id(provider_name)[0][0]
+
+    print(f"id_proveedor: {id_proveedor}")
 
     if dict_tipos == "Cancel":
         du.popup_message("Operación cancelada")
@@ -24,16 +45,19 @@ def insert_tipo_producto():
             INSERT INTO TiposProducto (
                 nombre, 
                 precio, 
-                ganancia, 
-                codigoBarras) 
+                ganancia,
+                codigoBarras,
+                idProveedor) 
             VALUES (
                 '{dict_tipos["nombre"]}',
-                {float(dict_tipos["precio"]) 
+                {(float(dict_tipos["precio"]) 
                 + float(dict_tipos["precio"]) 
-                * float(dict_tipos["ganancia"])/100},
+                * float(dict_tipos["ganancia"])/100)
+                * (1 + du.iva)},
                 {float(dict_tipos["precio"]) 
                 * float(dict_tipos["ganancia"])/100}, 
-                '{dict_tipos["codigoBarras"]}')
+                '{dict_tipos["codigoBarras"]}',
+                {id_proveedor})
         """
         print(query_str)
         if du.exec_query(query_str) != None:

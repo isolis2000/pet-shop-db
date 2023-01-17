@@ -13,6 +13,7 @@ def new_tipo_producto():
         [sg.Text("Precio:"), sg.InputText(key="precio")],
         [sg.Text("Porcentaje de Ganancia:"), sg.InputText(key="ganancia")],
         [sg.Text("Codigo de Barras:"), sg.InputText(key="codigoBarras")],
+        [sg.Text("Nombre del Proveedor:"), sg.InputText(key="proveedor")],
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
@@ -74,12 +75,14 @@ def new_producto():
     return values
 
 
-def edit_tipo_producto(data_selected):
+def edit_tipo_producto(product: list, iva: int):
 
-    nombre = data_selected[0]
-    precio = str(float(data_selected[1]) - float(data_selected[3]))
-    porcentaje_ganancia = str(data_selected[2])
-    codigo_barras = data_selected[4]
+    print(f"product: {product}")
+    nombre = product[0]
+    precio = str(product[1] * (1 - iva))
+    porcentaje_ganancia = str(product[2])
+    codigo_barras = product[3]
+    proveedor = product[4]
 
     layout = [
         [sg.Text("Insertar Tipo de Producto")],
@@ -90,6 +93,7 @@ def edit_tipo_producto(data_selected):
             sg.InputText(porcentaje_ganancia, key="ganancia"),
         ],
         [sg.Text("Codigo de Barras:"), sg.InputText(codigo_barras, key="codigoBarras")],
+        [sg.Text("Proveedor:"), sg.InputText(proveedor, key="proveedor")],
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 

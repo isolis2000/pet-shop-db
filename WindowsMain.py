@@ -5,7 +5,8 @@ import DatabaseDelete as dd
 import DatabaseEdit as de
 import operator
 
-sg.theme("DarkAmber")
+# sg.theme("Reddit")
+sg.theme("Black")
 
 
 # Search functions ---------------------------------------------------------------
@@ -27,9 +28,9 @@ def search_inventory(input: str):
 
 def search_current_sale(input: str):
     if input == "":
-        return dr.read_current_sale()
+        return dr.read_current_order()
     else:
-        return dr.read_current_sale_n(input)
+        return dr.read_current_order_n(input)
 
 
 # Generic functions ---------------------------------------------------------------
@@ -55,13 +56,15 @@ def sort_table(table, cols):
 
 def main_window():
 
-    headings_products = ["Nombre", "Precio", "%" + " Ganancia", "Ganancia", "Código"]
+    headings_products = ["Nombre", "Precio", "Ganancia (₡)", "Proveedor", "Código"]
     headings_inventory = ["Nombre", "Compra", "Expiración", "Descuento", "Cantidad"]
     headings_sale = ["Cantidad", "Descripción", "Subtotal", "Descuento", "Código"]
+    headings_clients = []
+    headings_grooming = []
 
     data_products = dr.read_tipos_producto()
     data_inventory = dr.read_productos()
-    data_sale = dr.read_current_sale()
+    data_sale = dr.read_current_order()
 
     print(data_sale)
     generate_tabs_list = [
@@ -192,9 +195,11 @@ def main_window():
             if input != None:
                 dd.remove_tipo_producto(input)
         elif event == "-TABLE_P-":
-            data_selected = [values[event]]
+            data_selected = [data_products[row] for row in values[event]]
+            print(f"data_selected: {data_selected}")
             # window["-TABLE_P-"].update(data_products)
         elif event == "_EDIT_P_" and data_selected != []:
+            print(data_selected)
             de.edit_tipo_producto(data_selected[0])
 
         # Inventory Events ---------------------------------------------------------------------
@@ -207,6 +212,7 @@ def main_window():
             window["-TABLE_I-"].update(data_inventory)
         elif event == "-TABLE_I-":
             data_selected = [data_inventory[row] for row in values[event]]
+            print(f"data_selected: {data_selected}")
 
         # Sale Events -------------------------------------------------------------------------
         elif event == "_SEARCH_S_" or event == "-INPUT_S-" + "_Enter":
