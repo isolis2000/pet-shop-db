@@ -5,32 +5,54 @@ import DatabaseDelete as dd
 import DatabaseEdit as de
 import operator
 
-# sg.theme("Reddit")
-sg.theme("Black")
+sg.theme("Reddit")
+# sg.theme("Black")
 
 
 # Search functions ---------------------------------------------------------------
 
 
-def search_products(input: str):
-    if input == "":
+def search_products(search_input: str):
+    if search_input == "":
         return dr.read_tipos_producto()
     else:
-        return dr.read_tipos_producto_n(input)
+        return dr.read_tipos_producto_n(search_input)
 
 
-def search_inventory(input: str):
-    if input == "":
+def search_inventory(search_input: str):
+    if search_input == "":
         return dr.read_productos()
     else:
-        return dr.read_productos_n(input)
+        return dr.read_productos_n(search_input)
 
 
-def search_current_sale(input: str):
-    if input == "":
+def search_current_sale(search_input: str):
+    if search_input == "":
         return dr.read_current_order()
     else:
-        return dr.read_current_order_n(input)
+        return dr.read_current_order_n(search_input)
+
+
+def search(ending: str, search_input: str):
+    print(f"search: ending-{ending}, search_input-{search_input}")
+    if ending == "P":
+        return search_products(search_input)
+    elif ending == "I":
+        return search_inventory(search_input)
+    elif ending == "S":
+        return search_current_sale(search_input)
+
+
+# Insert functions ----------------------------------------------------------------
+
+
+def new_insert(ending: str, new_sale=False):
+    if ending == "P":
+        di.insert_tipo_producto()
+    elif ending == "I":
+        di.insert_producto()
+    elif ending == "S":
+        di.add_to_venta(new_sale)
 
 
 # Generic functions ---------------------------------------------------------------
@@ -59,31 +81,35 @@ def main_window():
     headings_products = ["Nombre", "Precio", "Ganancia (₡)", "Proveedor", "Código"]
     headings_inventory = ["Nombre", "Compra", "Expiración", "Descuento", "Cantidad"]
     headings_sale = ["Cantidad", "Descripción", "Subtotal", "Descuento", "Código"]
-    headings_clients = []
-    headings_grooming = []
+    headings_grooming = ["Mascota", "Propietario", "Raza", "Monto", "Notas"]
+    # Click para revisar datos de cliente
+    headings_clients = ["Nombre", "Telefono", "Mascotas", "# de compras"]
 
     data_products = dr.read_tipos_producto()
     data_inventory = dr.read_productos()
     data_sale = dr.read_current_order()
+    data_grooming = dr.read_grooming()
+    data_clients = dr.read_clients()
 
-    print(data_sale)
     generate_tabs_list = [
-        (headings_products, data_products, "P", "Productos"),
-        (headings_inventory, data_inventory, "I", "Inventario"),
-        (headings_sale, data_sale, "S", "Venta"),
+        [headings_products, data_products, "P", "Productos"],
+        [headings_inventory, data_inventory, "I", "Inventario"],
+        [headings_sale, data_sale, "S", "Venta"],
+        [headings_grooming, data_grooming, "G", "Peluquería"],
+        [headings_clients, data_clients, "C", "Clientes"],
     ]
     generated_tabs_layout = []
 
     for tup in generate_tabs_list:
 
         key_letter = tup[2]
-        input_key = f"-INPUT_{key_letter}-"
+        input_key = f"_INPUT_{key_letter}_"
         search_key = f"_SEARCH_{key_letter}_"
         add_key = f"_ADD_{key_letter}_"
         delete_key = f"_DELETE_{key_letter}_"
         edit_key = f"_EDIT_{key_letter}_"
-        table_key = f"-TABLE_{key_letter}-"
-        tab_key = f"-TAB_{key_letter}-"
+        table_key = f"_TABLE_{key_letter}_"
+        tab_key = f"_TAB_{key_letter}_"
 
         generated_tab = None
 
@@ -136,18 +162,20 @@ def main_window():
             sg.TabGroup(
                 [[tab for tab in generated_tabs_layout]],
                 enable_events=True,
-                key="-TAB-",
+                key="_TAB_",
             )
         ]
     ]
 
     window = sg.Window("Ventana Principal", layout, font="Courier 12", finalize=True)
 
-    window["-INPUT_P-"].bind("<Return>", "_Enter")
-    window["-INPUT_I-"].bind("<Return>", "_Enter")
-    window["-INPUT_S-"].bind("<Return>", "_Enter")
+    window["_INPUT_P_"].bind("<Return>", "_Enter")
+    window["_INPUT_I_"].bind("<Return>", "_Enter")
+    window["_INPUT_S_"].bind("<Return>", "_Enter")
+    window["_INPUT_G_"].bind("<Return>", "_Enter")
+    window["_INPUT_C_"].bind("<Return>", "_Enter")
 
-    window["-INPUT_P-"].set_focus()
+    window["_INPUT_P_"].set_focus()
     data_selected = []
 
     while True:
@@ -155,109 +183,163 @@ def main_window():
         window.refresh()
         event, values = window.read()
 
-        print("--------------------------------------------------")
+        print("_------------------------------------------------_")
         print(f"Event: {event}")
+
+        #     generate_tabs_list = [
+        #     (headings_products, data_products, "P", "Productos"),
+        #     (headings_inventory, data_inventory, "I", "Inventario"),
+        #     (headings_sale, data_sale, "S", "Venta"),
+        #     (headings_grooming, data_grooming, "G", "Peluquería"),
+        #     (headings_clients, data_clients, "C", "Clientes"),
+        # ]
 
         # General Events ------------------------------------------------------------------------
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-        if event == "-TAB-":
-            if values["-TAB-"] == "-TAB_P-":
-                data_products = search_products(values["-INPUT_P-"])
-                window["-TABLE_P-"].update(data_products)
-                window["-INPUT_P-"].set_focus()
-                data_selected = []
-            elif values["-TAB-"] == "-TAB_I-":
-                print("Entro")
-                data_inventory = search_inventory(values["-INPUT_I-"])
-                window["-TABLE_I-"].update(data_inventory)
-                window["-INPUT_I-"].set_focus()
-                data_selected = []
-            elif values["-TAB-"] == "-TAB_S-":
-                data_sale = search_current_sale(values["-INPUT_S-"])
-                window["-TABLE_S-"].update(data_sale)
-                window["-INPUT_S-"].set_focus()
-                data_selected = []
+        # Sorting Events ----------------------------------------------------------------------
+        elif isinstance(event, tuple):
+            # TABLE CLICKED Event has value in format ('-TABLE=', '+CLICKED+', (row,col))
+            if event[0].startswith("_TABLE"):
+                ending = event[0][-2]
+                for tup in generate_tabs_list:
+                    if tup[2] == ending and (event[2][0] == -1 and event[2][1] != -1):
+                        col_num_clicked = event[2][1]
+                        tup[1] = search(ending, values[f"_INPUT_{ending}_"])
+                        tup[1] = sort_table(tup[1], (col_num_clicked, 0))
+                        window[f"_TABLE_{ending}_"].update(tup[1])
+
+        elif event.startswith("_TAB_"):
+            ending = values["_TAB_"][-2]
+            search_input = values[f"_INPUT_{ending}_"]
+            for tup in generate_tabs_list:
+                if tup[2] == ending:
+                    tup[1] = search(ending, search_input)
+                    window[f"_TABLE_{ending}_"].update(tup[1])
+                    window[f"_INPUT_{ending}_"].set_focus()
+                    data_selected = []
+
+        elif event.startswith("_SEARCH"):
+            ending = event[-2]
+            for tup in generate_tabs_list:
+                if tup[2] == ending:
+                    tup[1] = search(ending, values[f"_INPUT_{ending}_"])
+                    window[f"_TABLE_{ending}_"].update(tup[1])
+
+        elif event.startswith("_INPUT") and event.endswith("_Enter"):
+            ending = event[-8]
+            for tup in generate_tabs_list:
+                if tup[2] == ending:
+                    tup[1] = search(ending, values[f"_INPUT_{ending}_"])
+                    window[f"_TABLE_{ending}_"].update(tup[1])
+
+        elif event.startswith("_ADD"):
+            ending = event[-2]
+            for tup in generate_tabs_list:
+                if tup[2] == ending:
+                    new_insert(ending, bool(tup[1]))
+                    tup[1] = search(ending, values[f"_INPUT_{ending}_"])
+                    window[f"_TABLE_{ending}_"].update(tup[1])
+
+        elif event.startswith("_TABLE"):
+            ending = event[-2]
+            for tup in generate_tabs_list:
+                if tup[2] == ending:
+                    data_selected = [tup[1][row] for row in values[event]]
+
+        # if event[0] == "_TABLE_P_":
+        #     if event[2][0] == -1 and event[2][1] != -1:
+        #         col_num_clicked = event[2][1]
+        #         data_products = search_products(values["_INPUT_P_"])
+        #         data_products = sort_table(data_products, (col_num_clicked, 0))
+        #         window["_TABLE_P_"].update(data_products)
+        # elif event[0] == "_TABLE_I_":
+        #     if event[2][0] == -1 and event[2][1] != -1:
+        #         col_num_clicked = event[2][1]
+        #         data_inventory = search_inventory(values["_INPUT_I_"])
+        #         data_inventory = sort_table(data_inventory, (col_num_clicked, 0))
+        #         window["_TABLE_I_"].update(data_inventory)
+        # elif event[0] == "_TABLE_S_":
+        #     if event[2][0] == -1 and event[2][1] != -1:
+        #         col_num_clicked = event[2][1]
+        #         data_sale = search_current_sale(values["_INPUT_S_"])
+        #         data_sale = sort_table(data_sale, (col_num_clicked, 0))
+        #         window["_TABLE_S_"].update(data_sale)
+
+        # if values["_TAB_"] == "_TAB_P_":
+        #     data_products = search_products(values["_INPUT_P_"])
+        #     window["_TABLE_P_"].update(data_products)
+        #     window["_INPUT_P_"].set_focus()
+        #     data_selected = []
+        # elif values["_TAB_"] == "_TAB_I_":
+        #     print("Entro")
+        #     data_inventory = search_inventory(values["_INPUT_I_"])
+        #     window["_TABLE_I_"].update(data_inventory)
+        #     window["_INPUT_I_"].set_focus()
+        #     data_selected = []
+        # elif values["_TAB_"] == "_TAB_S_":
+        #     data_sale = search_current_sale(values["_INPUT_S_"])
+        #     window["_TABLE_S_"].update(data_sale)
+        #     window["_INPUT_S_"].set_focus()
+        #     data_selected = []
 
         # Products Events -----------------------------------------------------------------------
-        elif event == "_SEARCH_P_" or event == "-INPUT_P-" + "_Enter":
-            data_products = search_products(values["-INPUT_P-"])
-            window["-TABLE_P-"].update(data_products)
-        elif event == "_ADD_P_":
-            di.insert_tipo_producto()
-            data_products = search_products(values["-INPUT_P-"])
-            window["-TABLE_P-"].update(data_products)
+        # elif event == "_SEARCH_P_" or event == "_INPUT_P_" + "_Enter":
+        #     data_products = search_products(values["_INPUT_P_"])
+        #     window["_TABLE_P_"].update(data_products)
+        # elif event == "_ADD_P_":
+        #     di.insert_tipo_producto()
+        #     data_products = search_products(values["_INPUT_P_"])
+        #     window["_TABLE_P_"].update(data_products)
         elif event == "_DELETE_P_":
-            input = sg.popup_get_text(
+            input_text = sg.popup_get_text(
                 "Digite el nombre del producto o su código de barras.\n"
                 + "Nota: no se podrá eliminar el producto si aun hay en el inventario."
             )
-            if input != None:
-                dd.remove_tipo_producto(input)
-        elif event == "-TABLE_P-":
-            data_selected = [data_products[row] for row in values[event]]
-            print(f"data_selected: {data_selected}")
-            # window["-TABLE_P-"].update(data_products)
+            if input_text != None:
+                dd.remove_tipo_producto(input_text)
+        # elif event == "_TABLE_P_":
+        #     data_selected = [data_products[row] for row in values[event]]
+        #     print(f"data_selected: {data_selected}")
+        # window["_TABLE_P_"].update(data_products)
         elif event == "_EDIT_P_" and data_selected != []:
             print(data_selected)
             de.edit_tipo_producto(data_selected[0])
 
         # Inventory Events ---------------------------------------------------------------------
-        elif event == "_SEARCH_I_" or event == "-INPUT_I-" + "_Enter":
-            data_inventory = search_inventory(values["-INPUT_I-"])
-            window["-TABLE_I-"].update(data_inventory)
-        elif event == "_ADD_I_":
-            di.insert_producto()
-            data_inventory = search_inventory(values["-INPUT_I-"])
-            window["-TABLE_I-"].update(data_inventory)
-        elif event == "-TABLE_I-":
-            data_selected = [data_inventory[row] for row in values[event]]
-            print(f"data_selected: {data_selected}")
+        # elif event == "_SEARCH_I_" or event == "_INPUT_I_" + "_Enter":
+        #     data_inventory = search_inventory(values["_INPUT_I_"])
+        #     window["_TABLE_I_"].update(data_inventory)
+        # elif event == "_ADD_I_":
+        #     di.insert_producto()
+        #     data_inventory = search_inventory(values["_INPUT_I_"])
+        #     window["_TABLE_I_"].update(data_inventory)
+        # elif event == "_TABLE_I_":
+        #     data_selected = [data_inventory[row] for row in values[event]]
+        #     print(f"data_selected: {data_selected}")
 
         # Sale Events -------------------------------------------------------------------------
-        elif event == "_SEARCH_S_" or event == "-INPUT_S-" + "_Enter":
-            data_sale = search_current_sale(values["-INPUT_S-"])
-            window["-TABLE_S-"].update(data_sale)
-        elif event == "_ADD_S_":
-            if data_sale == []:
-                di.add_to_venta(True)
-            else:
-                di.add_to_venta()
-            data_sale = search_current_sale(values["-INPUT_S-"])
-            window["-TABLE_S-"].update(data_sale)
-        elif event == "-TABLE_S-":
-            data_selected = [data_sale[row] for row in values[event]]
+        # elif event == "_SEARCH_S_" or event == "_INPUT_S_" + "_Enter":
+        #     data_sale = search_current_sale(values["_INPUT_S_"])
+        #     window["_TABLE_S_"].update(data_sale)
+        # elif event == "_ADD_S_":
+        #     if data_sale == []:
+        #         di.add_to_venta(True)
+        #     else:
+        #         di.add_to_venta()
+        #     data_sale = search_current_sale(values["_INPUT_S_"])
+        #     window["_TABLE_S_"].update(data_sale)
+        # elif event == "_TABLE_S_":
+        #     data_selected = [data_sale[row] for row in values[event]]
         elif event == "_EDIT_S_" and data_selected != []:
             de.edit_sale_prod_quantity(data_selected[0][5])
-            data_sale = search_current_sale(values["-INPUT_S-"])
-            window["-TABLE_S-"].update(data_sale)
+            data_sale = search_current_sale(values["_INPUT_S_"])
+            window["_TABLE_S_"].update(data_sale)
         elif event == "_SELL_S_":
             de.update_inventory_after_sale()
             de.edit_estado_compra("finalizado")
-            data_sale = search_current_sale(values["-INPUT_S-"])
-            window["-TABLE_S-"].update(data_sale)
-
-        # Sorting Events ----------------------------------------------------------------------
-        elif isinstance(event, tuple):
-            # TABLE CLICKED Event has value in format ('-TABLE=', '+CLICKED+', (row,col))
-            if event[0] == "-TABLE_P-":
-                if event[2][0] == -1 and event[2][1] != -1:
-                    col_num_clicked = event[2][1]
-                    data_products = search_products(values["-INPUT_P-"])
-                    data_products = sort_table(data_products, (col_num_clicked, 0))
-                    window["-TABLE_P-"].update(data_products)
-            elif event[0] == "-TABLE_I-":
-                if event[2][0] == -1 and event[2][1] != -1:
-                    col_num_clicked = event[2][1]
-                    data_inventory = search_inventory(values["-INPUT_I-"])
-                    data_inventory = sort_table(data_inventory, (col_num_clicked, 0))
-                    window["-TABLE_I-"].update(data_inventory)
-            elif event[0] == "-TABLE_S-":
-                if event[2][0] == -1 and event[2][1] != -1:
-                    col_num_clicked = event[2][1]
-                    data_sale = search_current_sale(values["-INPUT_S-"])
-                    data_sale = sort_table(data_sale, (col_num_clicked, 0))
-                    window["-TABLE_S-"].update(data_sale)
+            data_sale = search_current_sale(values["_INPUT_S_"])
+            window["_TABLE_S_"].update(data_sale)
 
         # print(f"data_selected: {data_selected}")
         # print(f"data_products: {data_products}")
@@ -266,9 +348,9 @@ def main_window():
         # # print(f"values[event]: {values[event]}")
         # print(f"values: {values}")
 
-        # window["-TABLE_P-"].update(data_products)
-        # window["-TABLE_I-"].update(data_inventory)
-        # window["-TABLE_S-"].update(data_sale)
+        # window["_TABLE_P_"].update(data_products)
+        # window["_TABLE_I_"].update(data_inventory)
+        # window["_TABLE_S_"].update(data_sale)
 
     window.close()
 

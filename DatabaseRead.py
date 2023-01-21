@@ -60,18 +60,18 @@ def read_tipos_producto_n(input: str):
     print(f"input: {input}")
     data = du.exec_query(
         f"""
-    SELECT 
-            TP.nombre, 
-            TP.precio, 
-            TP.ganancia, 
-            TP.codigoBarras,
-            P.nombre
-        FROM 
-            TiposProducto AS TP
-            INNER JOIN Proveedores AS P ON P.id = TP.idProveedor
-    WHERE 
-        TP.nombre='{input}'
-        OR TP.codigoBarras='{input}'
+        SELECT 
+                TP.nombre, 
+                TP.precio, 
+                TP.ganancia, 
+                TP.codigoBarras,
+                P.nombre
+            FROM 
+                TiposProducto AS TP
+                INNER JOIN Proveedores AS P ON P.id = TP.idProveedor
+        WHERE 
+            TP.nombre='{input}'
+            OR TP.codigoBarras='{input}'
     """
     )
 
@@ -264,6 +264,14 @@ def find_proveedor_id(provider_name: str):
             nombre = '{provider_name}'
         """
     )
+
+
+def read_grooming():
+    return []
+
+
+def read_clients():
+    return []
 
 
 def read_registro():

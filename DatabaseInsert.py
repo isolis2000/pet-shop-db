@@ -20,6 +20,10 @@ def insert_proveedor(name: str):
 def insert_tipo_producto():
 
     dict_tipos = we.new_tipo_producto()
+    if dict_tipos == "Cancel":
+        du.popup_message("Operación cancelada")
+        return
+
     provider_name = dict_tipos["proveedor"]
     proveedor_res = dr.find_proveedor_id(provider_name)
     print(f"proveedor_res: {proveedor_res}")
@@ -28,10 +32,7 @@ def insert_tipo_producto():
     id_proveedor = dr.find_proveedor_id(provider_name)[0][0]
 
     print(f"id_proveedor: {id_proveedor}")
-
-    if dict_tipos == "Cancel":
-        du.popup_message("Operación cancelada")
-    elif du.verify_dict(dict_tipos):
+    if du.verify_dict(dict_tipos):
         print(dict_tipos)
         print("NOMBRE: " + dict_tipos["nombre"])
 

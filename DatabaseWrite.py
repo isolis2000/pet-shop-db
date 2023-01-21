@@ -9,6 +9,9 @@ def create_all():
         create_tipos_producto(cursor)
         create_productos(cursor)
         create_clientes(cursor)
+        create_razas(cursor)
+        create_clientes_peluqueria(cursor)
+        create_tipos_pago(cursor)
         create_compras(cursor)
         create_compras_productos(cursor)
         create_registro(cursor)
@@ -75,28 +78,52 @@ def create_clientes(cursor):  # datos por definir
     command = """ CREATE TABLE Clientes (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL,
-                    apellido1 TEXT,
-                    apellido2 TEXT,
                     telefono TEXT
     ); """
 
     cursor.execute(command)
     print("Table Clientes successfully created")
+
+
+def create_razas(cursor):
+    cursor.execute("DROP TABLE IF EXISTS Razas")
+
+    command = """ CREATE TABLE Razas (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL
+    ); """
+
+    cursor.execute(command)
+    print("Table Razas successfully created")
 
 
 def create_clientes_peluqueria(cursor):  # datos por definir
-    cursor.execute("DROP TABLE IF EXISTS Peluqueria")
+    cursor.execute("DROP TABLE IF EXISTS MascotasPeluqueria")
 
-    command = """ CREATE TABLE Peluqueria (
+    command = """ CREATE TABLE MascotasPeluqueria (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL,
-                    apellido1 TEXT,
-                    apellido2 TEXT,
-                    telefono TEXT
+                    notasAdicionales TEXT,
+                    idRaza INTEGER,
+                    idCliente INTEGER,
+                    FOREIGN KEY (idRaza) REFERENCES Razas(id),
+                    FOREIGN KEY (idCliente) REFERENCES Clientes(id)
     ); """
 
     cursor.execute(command)
-    print("Table Clientes successfully created")
+    print("Table MascotasPeluqueria successfully created")
+
+
+def create_tipos_pago(cursor):
+    cursor.execute("DROP TABLE IF EXISTS TiposPago")
+
+    command = """ CREATE TABLE TiposPago (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL
+    ); """  # resultados: En Progreso, Exitosa, Cancelada
+
+    cursor.execute(command)
+    print("Table TiposPago successfully created")
 
 
 def create_compras(cursor):
@@ -108,7 +135,9 @@ def create_compras(cursor):
                     estado TEXT NOT NULL,
                     totalAPagar REAL NOT NULL,
                     vuelto REAL NOT NULL,
+                    idTipoPago INTEGER NOT NULL,
                     idCliente INTEGER NOT NULL,
+                    FOREIGN KEY (idTipoPago) REFERENCES TiposPago(id),
                     FOREIGN KEY (idCliente) REFERENCES Clientes(id)
     ); """  # resultados: En Progreso, Exitosa, Cancelada
 
