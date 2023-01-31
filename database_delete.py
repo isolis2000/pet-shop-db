@@ -1,4 +1,4 @@
-import DatabaseUtil as du
+import database_util as du
 
 
 def remove_tipo_producto(input):

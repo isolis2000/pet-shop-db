@@ -8,6 +8,12 @@ import operator
 sg.theme("Reddit")
 # sg.theme("Black")
 
+# # New function added
+# def repack(widget, option):
+#     pack_info = widget.pack_info()
+#     pack_info.update(option)
+#     widget.pack(**pack_info)
+
 
 # Search functions ---------------------------------------------------------------
 
@@ -33,6 +39,20 @@ def search_current_sale(search_input: str):
         return dr.read_current_order_n(search_input)
 
 
+def search_clients(search_input: str):
+    if search_input == "":
+        return dr.read_clients()
+    else:
+        return dr.read_clients_n(search_input)
+
+
+def search_pets(search_input: str):
+    if search_input == "":
+        return dr.read_mascotas()
+    else:
+        return dr.read_mascotas_n(search_input)
+
+
 def search(ending: str, search_input: str):
     print(f"search: ending-{ending}, search_input-{search_input}")
     if ending == "P":
@@ -41,6 +61,10 @@ def search(ending: str, search_input: str):
         return search_inventory(search_input)
     elif ending == "S":
         return search_current_sale(search_input)
+    elif ending == "C":
+        return search_clients(search_input)
+    elif ending == "G":
+        return search_pets(search_input)
 
 
 # Insert functions ----------------------------------------------------------------
@@ -53,6 +77,8 @@ def new_insert(ending: str, new_sale=False):
         di.insert_producto()
     elif ending == "S":
         di.add_to_venta(new_sale)
+    elif ending == "C":
+        di.insert_client()
 
 
 # Generic functions ---------------------------------------------------------------
@@ -81,9 +107,10 @@ def main_window():
     headings_products = ["Nombre", "Precio", "Ganancia (₡)", "Proveedor", "Código"]
     headings_inventory = ["Nombre", "Compra", "Expiración", "Descuento", "Cantidad"]
     headings_sale = ["Cantidad", "Descripción", "Subtotal", "Descuento", "Código"]
-    headings_grooming = ["Mascota", "Propietario", "Raza", "Monto", "Notas"]
+    headings_clients = ["Nombre", "Telefono", "Mascotas"]
+    headings_grooming = ["Mascota", "Propietario", "Raza", "Notas"]
     # Click para revisar datos de cliente
-    headings_clients = ["Nombre", "Telefono", "Mascotas", "# de compras"]
+    # headings_receipts = ["Fecha", ""]
 
     data_products = dr.read_tipos_producto()
     data_inventory = dr.read_productos()
@@ -95,8 +122,8 @@ def main_window():
         [headings_products, data_products, "P", "Productos"],
         [headings_inventory, data_inventory, "I", "Inventario"],
         [headings_sale, data_sale, "S", "Venta"],
-        [headings_grooming, data_grooming, "G", "Peluquería"],
         [headings_clients, data_clients, "C", "Clientes"],
+        [headings_grooming, data_grooming, "G", "Peluquería"],
     ]
     generated_tabs_layout = []
 
@@ -116,44 +143,36 @@ def main_window():
         generated_table = sg.Table(
             values=tup[1],
             headings=tup[0],
-            auto_size_columns=False,
-            max_col_width=20,
-            def_col_width=20,
+            auto_size_columns=True,
+            # max_col_width=20,
+            # def_col_width=20,
             # col_widths=60,
             display_row_numbers=False,
             justification="center",
             enable_events=True,
             enable_click_events=True,
             select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-            key=table_key,
+            expand_x=True,
+            expand_y=True,
             row_height=35,
+            key=table_key,
         )
+
+        generated_tab = [
+            [
+                sg.InputText(size=13, expand_x=True, key=input_key),
+                sg.Button("Buscar", key=search_key),
+                sg.Button("Agregar", key=add_key),
+                sg.Button("Eliminar", key=delete_key),
+                sg.Button("Editar", key=edit_key),
+            ],
+            [generated_table],
+        ]
 
         if key_letter == "S":
             sell_key = f"_SELL_{key_letter}_"
-            sell_text = "Vender"
-            generated_tab = [
-                [
-                    sg.InputText(size=(59 - 4 - len(sell_text)), key=input_key),
-                    sg.Button("Buscar", key=search_key),
-                    sg.Button("Agregar", key=add_key),
-                    sg.Button("Eliminar", key=delete_key),
-                    sg.Button("Editar", key=edit_key),
-                    sg.Button(sell_text, key=sell_key),
-                ],
-                [generated_table],
-            ]
-        else:
-            generated_tab = [
-                [
-                    sg.InputText(size=(59), key=input_key),
-                    sg.Button("Buscar", key=search_key),
-                    sg.Button("Agregar", key=add_key),
-                    sg.Button("Eliminar", key=delete_key),
-                    sg.Button("Editar", key=edit_key),
-                ],
-                [generated_table],
-            ]
+            generated_tab[0] = generated_tab[0][:3]
+            generated_tab[0].append(sg.Button("Vender", key=sell_key))
 
         generated_tabs_layout.append(sg.Tab(tup[3], generated_tab, key=tab_key))
 
@@ -162,12 +181,21 @@ def main_window():
             sg.TabGroup(
                 [[tab for tab in generated_tabs_layout]],
                 enable_events=True,
+                expand_x=True,
+                expand_y=True,
                 key="_TAB_",
             )
         ]
     ]
 
-    window = sg.Window("Ventana Principal", layout, font="Courier 12", finalize=True)
+    window = sg.Window(
+        "Ventana Principal",
+        layout,
+        size=(1000, 500),
+        font="Courier 12",
+        resizable=True,
+        finalize=True,
+    )
 
     window["_INPUT_P_"].bind("<Return>", "_Enter")
     window["_INPUT_I_"].bind("<Return>", "_Enter")
@@ -185,6 +213,8 @@ def main_window():
 
         print("_------------------------------------------------_")
         print(f"Event: {event}")
+        print("_------------------------------------------------_")
+        print(f"Values: {values}")
 
         #     generate_tabs_list = [
         #     (headings_products, data_products, "P", "Productos"),
@@ -303,7 +333,6 @@ def main_window():
         #     print(f"data_selected: {data_selected}")
         # window["_TABLE_P_"].update(data_products)
         elif event == "_EDIT_P_" and data_selected != []:
-            print(data_selected)
             de.edit_tipo_producto(data_selected[0])
 
         # Inventory Events ---------------------------------------------------------------------

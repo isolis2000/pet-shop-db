@@ -1,6 +1,6 @@
-import WindowsEdit as we
-import DatabaseRead as dr
-import DatabaseUtil as du
+import gui_edit as we
+import database_read as dr
+import database_util as du
 import printing as pr
 import datetime
 

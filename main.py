@@ -7,3 +7,7 @@
 # insertarTipoProducto()
 # read.readDB()
 # displayTiposProducto()
+
+import gui_main as main
+
+main.main_window()

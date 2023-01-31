@@ -1,6 +1,6 @@
-import WindowsEdit as we
-import DatabaseRead as dr
-import DatabaseUtil as du
+import gui_edit as we
+import database_read as dr
+import database_util as du
 import datetime
 
 
@@ -116,12 +116,12 @@ def insert_producto():
 
 def add_to_venta(empty=False):
 
-    input = du.popup_input("Digite el código del producto")
-    if input == None:
+    popup_input = du.popup_input("Digite el código del producto")
+    if popup_input == None:
         du.popup_message("Operación cancelada")
         return
 
-    products_list = dr.read_productos_n(input)
+    products_list = dr.read_productos_n(popup_input)
 
     if products_list == []:
         du.popup_message("No existe ningún producto con este código o nombre")
@@ -181,6 +181,29 @@ def add_to_venta(empty=False):
     # """
     print(product_to_add)
     print(current_sale)
+
+
+def insert_client():
+    dict_client = we.new_client()
+
+    if dict_client["name"] == "":
+        du.popup_message("Es necesario un nombre para agregar un cliente")
+    else:
+        query_str = ""
+        if dict_client["phone"] == "":
+            query_str = f"""
+                    INSERT INTO Clientes (nombre)
+                    VALUES ('{dict_client["name"]}')
+                """
+        else:
+            query_str = f"""
+                    INSERT INTO Clientes (nombre, telefono)
+                    VALUES (
+                        '{dict_client["name"]}',
+                        '{dict_client["phone"]}')
+                """
+        print(query_str)
+        du.exec_query(query_str)
 
     # if dict_product == 'Cancel':
     #     du.popup_message("Operacion cancelada")

@@ -1,4 +1,4 @@
-import DatabaseUtil as du
+import database_util as du
 
 database = "Pet-shop.db"
 
@@ -56,8 +56,8 @@ def read_tipos_producto():
     return tipos_producto_ret_data(data)
 
 
-def read_tipos_producto_n(input: str):
-    print(f"input: {input}")
+def read_tipos_producto_n(user_input: str):
+    print(f"user_input: {user_input}")
     data = du.exec_query(
         f"""
         SELECT 
@@ -70,8 +70,8 @@ def read_tipos_producto_n(input: str):
                 TiposProducto AS TP
                 INNER JOIN Proveedores AS P ON P.id = TP.idProveedor
         WHERE 
-            TP.nombre='{input}'
-            OR TP.codigoBarras='{input}'
+            TP.nombre='{user_input}'
+            OR TP.codigoBarras='{user_input}'
     """
     )
 
@@ -109,7 +109,7 @@ def read_productos():
     return productos_ret_data(data)
 
 
-def read_productos_n(input: str):
+def read_productos_n(user_input: str):
     data = du.exec_query(
         f"""
         SELECT 
@@ -123,15 +123,15 @@ def read_productos_n(input: str):
             TiposProducto AS TP
             INNER JOIN Productos AS P ON TP.id = P.idTipoProducto
         WHERE
-            TP.nombre = '{input}'
-            OR TP.codigoBarras = '{input}'
+            TP.nombre = '{user_input}'
+            OR TP.codigoBarras = '{user_input}'
         """
     )
     # print(data)
     return productos_ret_data(data)
 
 
-# def read_product_plus_discount(input: str):
+# def read_product_plus_discount(user_input: str):
 #     data = du.exec_query(
 #         f"""
 #         SELECT
@@ -145,8 +145,8 @@ def read_productos_n(input: str):
 #             TiposProducto AS TP
 #             INNER JOIN Productos AS P ON TP.id = P.idTipoProducto
 #         WHERE
-#             TP.nombre = '{input}'
-#             OR TP.codigoBarras = '{input}'"""
+#             TP.nombre = '{user_input}'
+#             OR TP.codigoBarras = '{user_input}'"""
 #     )
 #     # print(data)
 #     ret_data = []
@@ -157,7 +157,7 @@ def read_productos_n(input: str):
 #     return ret_data
 
 
-def read_product_id(input: str):
+def read_product_id(user_input: str):
     data = du.exec_query(
         f"""
         SELECT 
@@ -219,7 +219,7 @@ def read_current_order():
     )
 
 
-def read_current_order_n(input: str):
+def read_current_order_n(user_input: str):
     return du.exec_query(
         f"""
         SELECT  
@@ -243,8 +243,8 @@ def read_current_order_n(input: str):
                 FROM Compras AS C
                 WHERE C.estado = 'En Progreso')
             AND 
-                (TP.nombre = '{input}'
-                OR TP.codigoBarras = '{input}');
+                (TP.nombre = '{user_input}'
+                OR TP.codigoBarras = '{user_input}');
     """
     )
 
@@ -271,7 +271,75 @@ def read_grooming():
 
 
 def read_clients():
-    return []
+    return du.exec_query(
+        f"""
+        SELECT
+            C.nombre,
+            C.telefono,
+            COUNT(M.nombre)
+        FROM 
+            Clientes AS C
+        INNER JOIN 
+            MascotasPeluqueria AS M ON M.idCliente = C.id
+        """
+    )
+
+
+def read_clients_n(client_name: str):
+    return du.exec_query(
+        f"""
+        SELECT
+            C.nombre,
+            C.telefono,
+            COUNT(M.nombre)
+        FROM 
+            Clientes AS C
+        INNER JOIN 
+            MascotasPeluqueria AS M ON M.idCliente = C.id
+        WHERE
+            C.nombre = '{client_name}'
+        GROUP BY
+            C.nombre
+        """
+    )
+
+
+def read_mascotas():
+    return du.exec_query(
+        f"""
+        SELECT 
+            M.nombre,
+            C.nombre,
+            R.nombre,
+            M.notasAdicionales
+        FROM
+            Mascotaspeluqueria AS M
+        INNER JOIN 
+            Clientes AS C ON M.idCliente = C.id
+        INNER JOIN 
+            Razas AS R ON M.idRaza = R.id
+        """
+    )
+
+
+def read_mascotas_n(pet_name: str):
+    return du.exec_query(
+        f"""
+        SELECT 
+            M.nombre,
+            C.nombre,
+            R.nombre,
+            M.notasAdicionales
+        FROM
+            Mascotaspeluqueria AS M
+        INNER JOIN 
+            Clientes AS C ON M.idCliente = C.id
+        INNER JOIN 
+            Razas AS R ON M.idRaza = R.id
+        WHERE
+            M.nombre = '{pet_name}'
+        """
+    )
 
 
 def read_registro():

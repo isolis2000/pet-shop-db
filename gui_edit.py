@@ -17,7 +17,7 @@ def new_tipo_producto():
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("IBDPs first window", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 12")
     submited = False
     event, values = window.read()
 
@@ -56,7 +56,7 @@ def new_producto():
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("IBDPs first window", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 12")
     submited = False
     event, values = window.read()
 
@@ -76,7 +76,6 @@ def new_producto():
 
 
 def edit_tipo_producto(product: list, iva: int):
-
     print(f"product: {product}")
     nombre = product[0]
     precio = str(product[1] * (1 - iva))
@@ -97,7 +96,7 @@ def edit_tipo_producto(product: list, iva: int):
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("IBDPs first window", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 12")
     submited = False
     event, values = window.read()
 
@@ -107,6 +106,28 @@ def edit_tipo_producto(product: list, iva: int):
         elif event == "_CANCEL_" or event == sg.WIN_CLOSED:
             values = "Cancel"
             submited = True
+
+    window.close()
+    return values
+
+
+def new_client():
+    layout = [
+        [sg.Text("Agregar Cliente")],
+        [sg.Text("Nombre:"), sg.InputText(key="name")],
+        [sg.Text("Teléfono:"), sg.InputText(key="phone")],
+        [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
+    ]
+
+    window = sg.Window("", layout, font="Courier 12")
+    event, values = window.read()
+
+    while True:
+        if event == "_ADD_":
+            break
+        elif event == "_CANCEL_" or event == sg.WIN_CLOSED:
+            values = "Cancel"
+            break
 
     window.close()
     return values
