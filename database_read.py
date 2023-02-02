@@ -315,7 +315,8 @@ def read_mascotas():
             M.nombre,
             C.nombre,
             R.nombre,
-            M.notasAdicionales
+            M.notasAdicionales,
+            M.monto
         FROM
             Mascotaspeluqueria AS M
         INNER JOIN 
@@ -333,7 +334,8 @@ def read_mascotas_n(pet_name: str):
             M.nombre,
             C.nombre,
             R.nombre,
-            M.notasAdicionales
+            M.notasAdicionales,
+            M.monto
         FROM
             Mascotaspeluqueria AS M
         INNER JOIN 

@@ -104,6 +104,7 @@ def create_clientes_peluqueria(cursor):  # datos por definir
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL,
                     notasAdicionales TEXT,
+                    monto INTEGER NOT NULL,
                     idRaza INTEGER,
                     idCliente INTEGER,
                     FOREIGN KEY (idRaza) REFERENCES Razas(id),

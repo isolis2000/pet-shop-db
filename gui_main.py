@@ -108,7 +108,7 @@ def main_window():
     headings_inventory = ["Nombre", "Compra", "Expiración", "Descuento", "Cantidad"]
     headings_sale = ["Cantidad", "Descripción", "Subtotal", "Descuento", "Código"]
     headings_clients = ["Nombre", "Telefono", "Mascotas"]
-    headings_grooming = ["Mascota", "Propietario", "Raza", "Notas"]
+    headings_grooming = ["Mascota", "Propietario", "Raza", "Notas", "Monto"]
     # Click para revisar datos de cliente
     # headings_receipts = ["Fecha", ""]
 
