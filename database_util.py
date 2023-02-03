@@ -7,6 +7,13 @@ db_name = "Pet-shop.db"
 iva = 0.13  # 13%
 
 
+def get_today_date(inverted: bool):
+    if inverted:
+        datetime.today().strftime("%d-%m-%Y")
+    else:
+        datetime.today().strftime("%Y-%m-%d")
+
+
 def exec_query(s: str):
     data = None
     try:
@@ -31,7 +38,7 @@ def insert_registro(message: str):
         fecha,
         mensaje)
     VALUES (
-        '{datetime.today().strftime("%Y-%m-%d")}',
+        '{get_today_date()}',
         '{message}'
         )
     """

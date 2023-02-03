@@ -210,5 +210,5 @@ def generate_receipt(
     pdf.custom_footer(date_time)
     # pdf.lines()
     # pdf.header(modifiedHeight=final_height)
-    pdf.output("test.pdf", "F")
+    pdf.output(f"{date_time}_{receipt_number}.pdf", "F")
     # use_printer('test.pdf')

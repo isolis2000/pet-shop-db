@@ -76,6 +76,8 @@ def edit_sale_prod_quantity(prod_id: int):
 def edit_estado_compra(str_state: str):
     if du.confirmation_popup("¿Seguro que desea finalizar la compra?"):
 
+        update_inventory_after_sale()
+
         curr_sale = dr.read_current_order()
         keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
         res_lst = []
@@ -83,9 +85,8 @@ def edit_estado_compra(str_state: str):
             res_lst.append(
                 {keys_list[i]: curr_item[i] for i in range(0, len(keys_list))}
             )
-        today = datetime.datetime.today().strftime("%d-%m-%Y")
 
-        pr.generate_receipt(123, "Huu", res_lst, today)
+        pr.generate_receipt(curr_sale[6], "Huu", res_lst, du.get_today_date(True))
 
         order_id = dr.read_current_sale_id()
         str_exec = f"""

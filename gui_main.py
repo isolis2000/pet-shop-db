@@ -133,7 +133,6 @@ def main_window():
         input_key = f"_INPUT_{key_letter}_"
         search_key = f"_SEARCH_{key_letter}_"
         add_key = f"_ADD_{key_letter}_"
-        delete_key = f"_DELETE_{key_letter}_"
         edit_key = f"_EDIT_{key_letter}_"
         table_key = f"_TABLE_{key_letter}_"
         tab_key = f"_TAB_{key_letter}_"
@@ -163,7 +162,6 @@ def main_window():
                 sg.InputText(size=13, expand_x=True, key=input_key),
                 sg.Button("Buscar", key=search_key),
                 sg.Button("Agregar", key=add_key),
-                sg.Button("Eliminar", key=delete_key),
                 sg.Button("Editar", key=edit_key),
             ],
             [generated_table],
@@ -173,6 +171,9 @@ def main_window():
             sell_key = f"_SELL_{key_letter}_"
             generated_tab[0] = generated_tab[0][:3]
             generated_tab[0].append(sg.Button("Vender", key=sell_key))
+        elif key_letter == "I":
+            delete_key = f"_DELETE_{key_letter}_"
+            generated_tab[0].append(sg.Button("Eliminar", key=delete_key))
 
         generated_tabs_layout.append(sg.Tab(tup[3], generated_tab, key=tab_key))
 
@@ -365,7 +366,6 @@ def main_window():
             data_sale = search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
         elif event == "_SELL_S_":
-            de.update_inventory_after_sale()
             de.edit_estado_compra("finalizado")
             data_sale = search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)

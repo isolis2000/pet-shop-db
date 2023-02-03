@@ -161,23 +161,26 @@ def read_productos_n(user_input: str):
 #     return ret_data
 
 
-def read_product_id(user_input: str):
-    data = du.exec_query(
-        f"""
-        SELECT 
-            id
-        """
-    )
+# def read_product_id(user_input: str):
+#     data = du.exec_query(
+#         f"""
+#         SELECT
+#             id
+#         """
+#     )
 
 
-def read_past_receipt(receipt_number):
+def read_past_receipt(receipt_number: int):
     return du.exec_query(
         """
         SELECT  
-            C.id,
-            C.fecha,
-            C.estado,
-            (SUM())
+            CP.Cantidad,
+            TP.nombre,
+            (TP.precio - P.descuento) * CP.Cantidad AS subtotal,
+            P.descuento, 
+            TP.codigoBarras,
+            CP.id,
+            P.id
         FROM 
             Compras_Productos AS CP
         INNER JOIN 
