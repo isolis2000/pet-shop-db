@@ -131,10 +131,19 @@ def add_to_venta(empty=False):
         query_str = f"""
                 INSERT INTO Compras (
                     fecha,
-                    estado)
+                    estado,
+                    totalAPagar,
+                    vuelto,
+                    idTipoPago,
+                    idCliente
+                    )
                 VALUES (
-                    '{datetime.datetime.today().strftime('%Y-%m-%d')}',
-                    'En Progreso')
+                    '{du.get_today_date()}',
+                    'En Progreso',
+                    0,
+                    0,
+                    0,
+                    0)
         """
         du.exec_query(query_str)
         print(query_str)

@@ -7,11 +7,11 @@ db_name = "Pet-shop.db"
 iva = 0.13  # 13%
 
 
-def get_today_date(inverted: bool):
+def get_today_date(inverted=False):
     if inverted:
-        datetime.today().strftime("%d-%m-%Y")
+        return datetime.today().strftime("%d-%m-%Y")
     else:
-        datetime.today().strftime("%Y-%m-%d")
+        return datetime.today().strftime("%Y-%m-%d")
 
 
 def exec_query(s: str):

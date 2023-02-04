@@ -1,5 +1,6 @@
 import os
 from fpdf import FPDF
+from database_util import get_today_date
 
 base_width = 74
 base_height = 105  # 55 to 83mm base
@@ -76,7 +77,7 @@ class PDF(FPDF):
     def body(self, receipt_number: int, phone: str, name: str, products: list):
 
         self.set_font("Arial", "B", base_font_num)
-        receiptText = f"PSPA{receipt_number:06}"
+        receiptText = f"{receipt_number:08}"
         self.cell(w=17, h=height_per_obj, txt="Factura No.:", border=self.borders)
         self.set_font("Arial", "", base_font_num)
         self.cell(w=0, h=height_per_obj, txt=receiptText, border=self.borders, ln=1)
@@ -210,5 +211,8 @@ def generate_receipt(
     pdf.custom_footer(date_time)
     # pdf.lines()
     # pdf.header(modifiedHeight=final_height)
-    pdf.output(f"{date_time}_{receipt_number}.pdf", "F")
+    pdf.output(f"facturas/{date_time}_{receipt_number}.pdf", "F")
     # use_printer('test.pdf')
+
+
+# generate_receipt(14, "Huu", test_products, get_today_date())

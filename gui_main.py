@@ -22,35 +22,35 @@ def search_products(search_input: str):
     if search_input == "":
         return dr.read_tipos_producto()
     else:
-        return dr.read_tipos_producto_n(search_input)
+        return dr.read_tipos_producto(search_input)
 
 
 def search_inventory(search_input: str):
     if search_input == "":
         return dr.read_productos()
     else:
-        return dr.read_productos_n(search_input)
+        return dr.read_productos(search_input)
 
 
 def search_current_sale(search_input: str):
     if search_input == "":
         return dr.read_current_order()
     else:
-        return dr.read_current_order_n(search_input)
+        return dr.read_current_order(search_input)
 
 
 def search_clients(search_input: str):
     if search_input == "":
         return dr.read_clients()
     else:
-        return dr.read_clients_n(search_input)
+        return dr.read_clients(search_input)
 
 
 def search_pets(search_input: str):
     if search_input == "":
         return dr.read_mascotas()
     else:
-        return dr.read_mascotas_n(search_input)
+        return dr.read_mascotas(search_input)
 
 
 def search(ending: str, search_input: str):
@@ -107,8 +107,9 @@ def main_window():
     headings_products = ["Nombre", "Precio", "Ganancia (₡)", "Proveedor", "Código"]
     headings_inventory = ["Nombre", "Compra", "Expiración", "Descuento", "Cantidad"]
     headings_sale = ["Cantidad", "Descripción", "Subtotal", "Descuento", "Código"]
-    headings_clients = ["Nombre", "Telefono", "Mascotas"]
+    headings_clients = ["Nombre", "Telefono"]
     headings_grooming = ["Mascota", "Propietario", "Raza", "Notas", "Monto"]
+    headings_receipts = ["Numero", "Fecha", "Nombre", "Total", "Tipo de Pago", "Estado"]
     # Click para revisar datos de cliente
     # headings_receipts = ["Fecha", ""]
 
@@ -117,6 +118,7 @@ def main_window():
     data_sale = dr.read_current_order()
     data_grooming = dr.read_grooming()
     data_clients = dr.read_clients()
+    data_receipts = dr.read_past_receipts()
 
     generate_tabs_list = [
         [headings_products, data_products, "P", "Productos"],
@@ -124,6 +126,7 @@ def main_window():
         [headings_sale, data_sale, "S", "Venta"],
         [headings_clients, data_clients, "C", "Clientes"],
         [headings_grooming, data_grooming, "G", "Peluquería"],
+        [headings_receipts, data_receipts, "R", "Facturas"],
     ]
     generated_tabs_layout = []
 
@@ -174,6 +177,10 @@ def main_window():
         elif key_letter == "I":
             delete_key = f"_DELETE_{key_letter}_"
             generated_tab[0].append(sg.Button("Eliminar", key=delete_key))
+        elif key_letter == "R":
+            closing_key = f"_CLOSING_{key_letter}_"
+            generated_tab[0] = generated_tab[0][:2]
+            generated_tab[0].append(sg.Button("Cierre de caja", key=closing_key))
 
         generated_tabs_layout.append(sg.Tab(tup[3], generated_tab, key=tab_key))
 
@@ -193,7 +200,7 @@ def main_window():
         "Ventana Principal",
         layout,
         size=(1000, 500),
-        font="Courier 12",
+        font="Courier 13",
         resizable=True,
         finalize=True,
     )
@@ -267,8 +274,10 @@ def main_window():
         elif event.startswith("_ADD"):
             ending = event[-2]
             for tup in generate_tabs_list:
+                # print(f"tup: {tup}")
                 if tup[2] == ending:
-                    new_insert(ending, bool(tup[1]))
+                    # print(f"bool(tup[1]): {tup[1]}")
+                    new_insert(ending, not tup[1])
                     tup[1] = search(ending, values[f"_INPUT_{ending}_"])
                     window[f"_TABLE_{ending}_"].update(tup[1])
 
@@ -366,7 +375,7 @@ def main_window():
             data_sale = search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
         elif event == "_SELL_S_":
-            de.edit_estado_compra("finalizado")
+            de.finalizar_compra()
             data_sale = search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
 

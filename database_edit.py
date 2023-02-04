@@ -2,7 +2,6 @@ import gui_edit as we
 import database_read as dr
 import database_util as du
 import printing as pr
-import datetime
 
 
 def edit_tipo_producto(data_selected):
@@ -73,12 +72,26 @@ def edit_sale_prod_quantity(prod_id: int):
     du.exec_query(str_exec)
 
 
-def edit_estado_compra(str_state: str):
+def finalizar_compra():
+
+    curr_sale = dr.read_current_order()
+    payments_list = dr.read_payment_types()
+    clients_list = dr.read_client_names()
+    print(f"lists: {payments_list}, {clients_list}")
+    answers = we.popup_finalize_sale(payments_list, clients_list)
+    if answers == None:
+        du.popup_message("Operacion cancelada")
+        return
+
     if du.confirmation_popup("¿Seguro que desea finalizar la compra?"):
+
+        payment = answers["_PAYMENT_"]
+        client = answers["_CLIENT_"]
+
+        print(f"payment: {payment}, client: {client}")
 
         update_inventory_after_sale()
 
-        curr_sale = dr.read_current_order()
         keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
         res_lst = []
         for curr_item in curr_sale:
@@ -91,7 +104,7 @@ def edit_estado_compra(str_state: str):
         order_id = dr.read_current_sale_id()
         str_exec = f"""
         UPDATE Compras
-            SET estado = '{str_state}'
+            SET estado = 'Finalizada'
             WHERE id = {order_id}
         """
         du.exec_query(str_exec)

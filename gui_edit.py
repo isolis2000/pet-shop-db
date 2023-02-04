@@ -133,7 +133,7 @@ def new_client():
     return values
 
 
-def popup_select(the_list, select_multiple=False):
+def popup_select(the_list: list, select_multiple=False):
     layout = [
         [
             sg.Listbox(
@@ -146,7 +146,7 @@ def popup_select(the_list, select_multiple=False):
             sg.OK(),
         ]
     ]
-    window = sg.Window("Select One", layout=layout)
+    window = sg.Window("", layout=layout, font="Courier 13", resizable=False)
     event, values = window.read()
     window.close()
     del window
@@ -156,6 +156,37 @@ def popup_select(the_list, select_multiple=False):
         return values["_LIST_"][0]
 
 
+def popup_finalize_sale(payments_list: list, clients_list: list):
+    layout = [
+        [
+            sg.Text("Tipo de pago:"),
+            sg.Combo(payments_list, default_value=payments_list[0], key="_PAYMENT_"),
+        ],
+        [
+            sg.Text("Cliente:"),
+            sg.Combo(clients_list, default_value=clients_list[0], key="_CLIENT_"),
+        ],
+        [sg.Ok()],
+    ]
+    window = sg.Window("", layout, font="Courier 13", resizable=True)
+    event, values = window.read()
+    if (
+        values["_PAYMENT_"] is None
+        or values["_CLIENT_"] is None
+        or values["_PAYMENT_"] == ""
+        or values["_CLIENT_"] == ""
+    ):
+        return None
+    else:
+        return values
+
+
 # usage examples
 # nbr = popup_select([1,2,3]) # returns single number
 # lst = popup_select([1,2,3],select_multiple=True) # returns list of selected items
+
+# print(
+#     popup_finalize_sale(
+#         ["No especificado", "Efectivo", "Tarjeta", "SINPE"], ["Huu", "Chan"]
+#     )
+# )
