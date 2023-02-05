@@ -159,10 +159,11 @@ class PDF(FPDF):
             w=23, h=height_per_obj, txt="Total por servicio:", border=self.borders
         )
         self.set_font("Arial", "", base_font_num)
+        total_por_servicio = subtotal - descuento_total
         self.cell(
             w=0,
             h=height_per_obj,
-            txt=f"{subtotal-descuento_total:,.2f}",
+            txt=f"{total_por_servicio:,.2f}",
             align="R",
             border=self.borders,
             ln=1,
@@ -172,6 +173,7 @@ class PDF(FPDF):
         lineY = self.get_y() - height_per_obj / 2
         lineX = 1
         self.line(lineX, lineY, base_width - lineX, lineY)
+        return total_por_servicio
 
     def custom_footer(self, date_time: str):
         a1 = f"{'300 S centro del Adulto Mayor':^29}"
@@ -207,11 +209,12 @@ def generate_receipt(
     pdf = PDF(orientation="P", unit="mm", format=(base_width, final_height))
     pdf.add_page()
     pdf.custom_header()
-    pdf.body(receipt_number, "6362-9187", client_name, products_list)
+    final_price = pdf.body(receipt_number, "6362-9187", client_name, products_list)
     pdf.custom_footer(date_time)
     # pdf.lines()
     # pdf.header(modifiedHeight=final_height)
     pdf.output(f"facturas/{date_time}_{receipt_number}.pdf", "F")
+    return final_price
     # use_printer('test.pdf')
 
 

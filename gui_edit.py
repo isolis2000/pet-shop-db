@@ -160,7 +160,9 @@ def popup_finalize_sale(payments_list: list, clients_list: list):
     layout = [
         [
             sg.Text("Tipo de pago:"),
-            sg.Combo(payments_list, default_value=payments_list[0], key="_PAYMENT_"),
+            sg.Combo(
+                payments_list, default_value=payments_list[0], key="_PAYMENT_TYPE_"
+            ),
         ],
         [
             sg.Text("Cliente:"),
@@ -170,15 +172,26 @@ def popup_finalize_sale(payments_list: list, clients_list: list):
     ]
     window = sg.Window("", layout, font="Courier 13", resizable=True)
     event, values = window.read()
+    window.close()
+    final_values = [values["_PAYMENT_TYPE_"], values["_CLIENT_"]]
     if (
-        values["_PAYMENT_"] is None
+        values["_PAYMENT_TYPE_"] is None
         or values["_CLIENT_"] is None
-        or values["_PAYMENT_"] == ""
+        or values["_PAYMENT_TYPE_"] == ""
         or values["_CLIENT_"] == ""
     ):
         return None
-    else:
-        return values
+    elif values["_PAYMENT_TYPE_"] == "Efectivo":
+        payment_text = """
+            ¿Con cuánto va a cancelar?
+        Escriba un 0 si es el monto exacto.
+        """
+        layout = [[sg.Text(payment_text)], [sg.InputText("", key="_PAYMENT_")]]
+        window = sg.Window("", layout, font="Courier 13", resizable=True)
+        event, values = window.read()
+        window.close()
+        final_values.append(values["_PAYMENT_"])
+    return final_values
 
 
 # usage examples

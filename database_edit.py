@@ -73,7 +73,6 @@ def edit_sale_prod_quantity(prod_id: int):
 
 
 def finalizar_compra():
-
     curr_sale = dr.read_current_order()
     payments_list = dr.read_payment_types()
     clients_list = dr.read_client_names()
@@ -85,10 +84,11 @@ def finalizar_compra():
 
     if du.confirmation_popup("¿Seguro que desea finalizar la compra?"):
 
-        payment = answers["_PAYMENT_"]
-        client = answers["_CLIENT_"]
+        payment_type = answers[0]
+        client = answers[1]
+        payment = answers[2]
 
-        print(f"payment: {payment}, client: {client}")
+        print(f"payment: {payment_type}, client: {client}")
 
         update_inventory_after_sale()
 
@@ -99,12 +99,17 @@ def finalizar_compra():
                 {keys_list[i]: curr_item[i] for i in range(0, len(keys_list))}
             )
 
-        pr.generate_receipt(curr_sale[6], "Huu", res_lst, du.get_today_date(True))
+        final_price = pr.generate_receipt(
+            curr_sale[0][6], "Huu", res_lst, du.get_today_date(True)
+        )
 
         order_id = dr.read_current_sale_id()
         str_exec = f"""
         UPDATE Compras
-            SET estado = 'Finalizada'
+            SET 
+                estado = 'Finalizada',
+                totalAPagar = {final_price},
+
             WHERE id = {order_id}
         """
         du.exec_query(str_exec)

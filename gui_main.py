@@ -53,6 +53,13 @@ def search_pets(search_input: str):
         return dr.read_mascotas(search_input)
 
 
+def search_receipts(search_input: str):
+    if search_input == "":
+        return dr.read_past_receipts()
+    else:
+        return dr.read_past_receipts(search_input)
+
+
 def search(ending: str, search_input: str):
     print(f"search: ending-{ending}, search_input-{search_input}")
     if ending == "P":
@@ -65,6 +72,8 @@ def search(ending: str, search_input: str):
         return search_clients(search_input)
     elif ending == "G":
         return search_pets(search_input)
+    elif ending == "R":
+        return search_receipts(search_input)
 
 
 # Insert functions ----------------------------------------------------------------
