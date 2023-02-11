@@ -138,10 +138,10 @@ def popup_select(the_list: list, select_multiple=False):
         [
             sg.Listbox(
                 the_list,
-                key="_LIST_",
                 size=(45, len(the_list)),
                 select_mode="extended" if select_multiple else "single",
                 bind_return_key=True,
+                key="_LIST_",
             ),
             sg.OK(),
         ]
@@ -154,6 +154,25 @@ def popup_select(the_list: list, select_multiple=False):
         return values["_LIST_"]
     else:
         return values["_LIST_"][0]
+
+
+def popup_select_combo(the_list: list):
+    layout = [
+        [
+            sg.Combo(
+                the_list,
+                default_value=the_list[0],
+                bind_return_key=True,
+                key="_SELECTION_",
+            ),
+            sg.Ok(),
+        ]
+    ]
+    window = sg.Window("", layout=layout, font="Courier 13", resizable=False)
+    event, values = window.read()
+    window.close()
+    del window
+    return values["_SELECTION_"]
 
 
 def popup_finalize_sale(payments_list: list, clients_list: list):
@@ -186,7 +205,11 @@ def popup_finalize_sale(payments_list: list, clients_list: list):
             ¿Con cuánto va a cancelar?
         Escriba un 0 si es el monto exacto.
         """
-        layout = [[sg.Text(payment_text)], [sg.InputText("", key="_PAYMENT_")]]
+        layout = [
+            [sg.Text(payment_text)],
+            [sg.InputText("", key="_PAYMENT_")],
+            [sg.Ok()],
+        ]
         window = sg.Window("", layout, font="Courier 13", resizable=True)
         event, values = window.read()
         window.close()

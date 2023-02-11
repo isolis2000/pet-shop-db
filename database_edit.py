@@ -82,11 +82,20 @@ def finalizar_compra():
         du.popup_message("Operacion cancelada")
         return
 
-    if du.confirmation_popup("¿Seguro que desea finalizar la compra?"):
+    payment_type = answers[0]
+    client = answers[1]
+    payment = answers[2]
+    change = 0
+    if payment != 0:
+        change = float(payment) - final_price
 
-        payment_type = answers[0]
-        client = answers[1]
-        payment = answers[2]
+    if change == 0:
+        confirmation_text = "¿Seguro que desea finalizar la compra?"
+    else:
+        confirmation_text = f"""{'El vuelto es {change}':^40},
+        {'¿Seguro que desea finalizar la compra?':^40}"""
+
+    if du.confirmation_popup(confirmation_text):
 
         print(f"payment: {payment_type}, client: {client}")
 
@@ -100,16 +109,23 @@ def finalizar_compra():
             )
 
         final_price = pr.generate_receipt(
-            curr_sale[0][6], "Huu", res_lst, du.get_today_date(True)
+            curr_sale[0][6], client, res_lst, du.get_today_date(True)
         )
 
         order_id = dr.read_current_sale_id()
+        change = 0
+        client_id = dr.find_client_id(client)
+        payment_type_id = dr.find_payment_type_id(payment_type)
+
         str_exec = f"""
         UPDATE Compras
             SET 
                 estado = 'Finalizada',
                 totalAPagar = {final_price},
-
+                vuelto = {change},
+                idTipoPago = {payment_type_id},
+                idCliente = {client_id}
             WHERE id = {order_id}
         """
+        print(str_exec)
         du.exec_query(str_exec)

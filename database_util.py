@@ -53,11 +53,11 @@ def verify_dict(dictionary: dict):
     return True
 
 
-def popup_message(message: str):
+def popup_message(message: str, duration_seconds=1):
     sg.popup(
         message,
         auto_close=True,
-        auto_close_duration=1,
+        auto_close_duration=duration_seconds,
         no_titlebar=True,
         button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
         any_key_closes=True,

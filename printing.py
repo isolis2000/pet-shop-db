@@ -214,6 +214,7 @@ def generate_receipt(
     # pdf.lines()
     # pdf.header(modifiedHeight=final_height)
     pdf.output(f"facturas/{date_time}_{receipt_number}.pdf", "F")
+    print(f"Final price: {final_price}")
     return final_price
     # use_printer('test.pdf')
 

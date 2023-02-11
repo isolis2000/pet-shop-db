@@ -113,7 +113,7 @@ def sort_table(table, cols):
 
 def main_window():
 
-    headings_products = ["Nombre", "Precio", "Ganancia (₡)", "Proveedor", "Código"]
+    headings_products = ["Nombre", "Precio", "Ganancia (₡)", "Código", "Proveedor"]
     headings_inventory = ["Nombre", "Compra", "Expiración", "Descuento", "Cantidad"]
     headings_sale = ["Cantidad", "Descripción", "Subtotal", "Descuento", "Código"]
     headings_clients = ["Nombre", "Telefono"]
@@ -187,11 +187,28 @@ def main_window():
             delete_key = f"_DELETE_{key_letter}_"
             generated_tab[0].append(sg.Button("Eliminar", key=delete_key))
         elif key_letter == "R":
-            closing_key = f"_CLOSING_{key_letter}_"
             generated_tab[0] = generated_tab[0][:2]
-            generated_tab[0].append(sg.Button("Cierre de caja", key=closing_key))
 
         generated_tabs_layout.append(sg.Tab(tup[3], generated_tab, key=tab_key))
+
+    other_functions_tab = [
+        [sg.Button("Generar codigos", pad=(5, 10), key="_GENERATE_CODES_")],
+        [sg.Button("Cierre de Caja", pad=(5, 10), key="_CLOSING_")],
+    ]
+
+    other_functions_layout = [
+        [sg.VPush()],
+        [
+            sg.Push(),
+            sg.Column(other_functions_tab, element_justification="c"),
+            sg.Push(),
+        ],
+        [sg.VPush()],
+    ]
+
+    generated_tabs_layout.append(
+        sg.Tab("Otras funciones", other_functions_layout, key="_TAB_O_")
+    )
 
     layout = [
         [
@@ -211,6 +228,7 @@ def main_window():
         size=(1000, 500),
         font="Courier 13",
         resizable=True,
+        element_justification="c",
         finalize=True,
     )
 
@@ -256,7 +274,7 @@ def main_window():
                         tup[1] = sort_table(tup[1], (col_num_clicked, 0))
                         window[f"_TABLE_{ending}_"].update(tup[1])
 
-        elif event.startswith("_TAB_"):
+        elif event.startswith("_TAB_") and values["_TAB_"] != "_TAB_O_":
             ending = values["_TAB_"][-2]
             search_input = values[f"_INPUT_{ending}_"]
             for tup in generate_tabs_list:
@@ -402,11 +420,11 @@ def main_window():
     window.close()
 
 
-# Proveedores (Juntar ganancia y %, ex: 100 (14%))
-# Cambiar el test.pdf por nombre real
-# Tabla facturas para visualizar lo que se ha hecho
-
-# Validar que no se elimine si hay en inventario
+# finalizar funciones adicionales
+# revision completa de bugs
+# Arreglar ventas cantidad de producto negativa
+# Arreglar finalizacion de venta
+# UnboundLocalError: local variable 'final_price' referenced before assignment
 
 
 main_window()

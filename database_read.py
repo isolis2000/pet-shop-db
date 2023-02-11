@@ -78,15 +78,30 @@ def read_tipos_producto(user_input=None):
         )
 
 
-def find_tipo_producto_id(codigo_barras: str):
+def find_tipo_producto_id(user_input: str):
     data = du.exec_query(
         f"""
-    SELECT 
-        id 
-    FROM 
-        TiposProducto 
-    WHERE 
-        codigoBarras='{codigo_barras}'"""
+        SELECT 
+            id 
+        FROM 
+            TiposProducto 
+        WHERE 
+            codigoBarras='{user_input}'
+            OR nombre='{user_input}'"""
+    )
+    return data[0][0]
+
+
+def find_product_type_bar_code(prod_name: str):
+    data = du.exec_query(
+        f"""
+        SELECT
+            codigoBarras
+        FROM 
+            TiposProducto
+        WHERE
+            nombre='{prod_name}'
+        """
     )
     return data[0][0]
 
@@ -393,6 +408,34 @@ def read_mascotas_n(pet_name: str):
             M.nombre = '{pet_name}'
         """
     )
+
+
+def find_payment_type_id(payment_name: str):
+    query_res = du.exec_query(
+        f"""
+        SELECT
+            id
+        FROM
+            TiposPago
+        WHERE 
+            nombre = '{payment_name}'
+        """
+    )
+    return query_res[0][0]
+
+
+def find_client_id(client_name: str):
+    query_res = du.exec_query(
+        f"""
+        SELECT
+            id
+        FROM
+            Clientes
+        WHERE 
+            nombre = '{client_name}'
+        """
+    )
+    return query_res[0][0]
 
 
 def read_registro():

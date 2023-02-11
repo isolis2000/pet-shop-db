@@ -124,7 +124,7 @@ def add_to_venta(empty=False):
     products_list = dr.read_productos_n(popup_input)
 
     if products_list == []:
-        du.popup_message("No existe ningún producto con este código o nombre")
+        du.popup_message("No existe ningún producto con este código")
         return
 
     if empty:
