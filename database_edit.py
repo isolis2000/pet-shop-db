@@ -8,7 +8,7 @@ def edit_tipo_producto(data_selected):
 
     print(f"data_selected: {data_selected}")
     id_producto = dr.find_tipo_producto_id(data_selected[4])
-    data_product = dr.read_tipos_producto_n(data_selected[4])
+    data_product = dr.read_tipos_producto(data_selected[4])
     dict_tipos = we.edit_tipo_producto(data_product[0], du.iva)
 
     if dict_tipos == "Cancel":
@@ -63,16 +63,21 @@ def update_inventory_after_sale():
 
 
 def edit_sale_prod_quantity(prod_id: int):
-    new_value = du.popup_input("Escriba la nueva cantidad de este producto")
-    str_exec = f"""
-    UPDATE Compras_Productos
-        SET cantidad = {new_value}
-        WHERE id = {prod_id}
-    """
-    du.exec_query(str_exec)
+    product = dr.read_productos(prod_id)[0]
+    product_quantity = int(product[4])
+    new_value = int(du.popup_input("Escriba la nueva cantidad de este producto"))
+    if new_value <= product_quantity:
+        str_exec = f"""
+        UPDATE Compras_Productos
+            SET cantidad = {new_value}
+            WHERE id = {prod_id}
+        """
+        du.exec_query(str_exec)
+    else:
+        du.popup_message("Cantidad del producto excede la cantidad en inventario")
 
 
-def finalizar_compra():
+def finalizar_compra() -> bool:
     curr_sale = dr.read_current_order()
     payments_list = dr.read_payment_types()
     clients_list = dr.read_client_names()
@@ -86,13 +91,24 @@ def finalizar_compra():
     client = answers[1]
     payment = answers[2]
     change = 0
+    keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
+    res_lst = []
+    for curr_item in curr_sale:
+        res_lst.append({keys_list[i]: curr_item[i] for i in range(0, len(keys_list))})
+
+    final_price = 0.0
+    for item in res_lst:
+        final_price += item["subtotal"] - item["descuento"]
+
+    print(f"final_price: {final_price}")
     if payment != 0:
         change = float(payment) - final_price
 
     if change == 0:
         confirmation_text = "¿Seguro que desea finalizar la compra?"
     else:
-        confirmation_text = f"""{'El vuelto es {change}':^40},
+        change_txt = f"El vuelto es {change}"
+        confirmation_text = f"""{change_txt:^40},
         {'¿Seguro que desea finalizar la compra?':^40}"""
 
     if du.confirmation_popup(confirmation_text):
@@ -101,15 +117,8 @@ def finalizar_compra():
 
         update_inventory_after_sale()
 
-        keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
-        res_lst = []
-        for curr_item in curr_sale:
-            res_lst.append(
-                {keys_list[i]: curr_item[i] for i in range(0, len(keys_list))}
-            )
-
-        final_price = pr.generate_receipt(
-            curr_sale[0][6], client, res_lst, du.get_today_date(True)
+        pr.generate_receipt(
+            curr_sale[0][6], client, res_lst, du.get_today_date(True), final_price
         )
 
         order_id = dr.read_current_sale_id()

@@ -5,8 +5,8 @@ import database_delete as dd
 import database_edit as de
 import operator
 
-sg.theme("Reddit")
-# sg.theme("Black")
+# sg.theme("Reddit")
+sg.theme("Black")
 
 # # New function added
 # def repack(widget, option):
@@ -181,7 +181,7 @@ def main_window():
 
         if key_letter == "S":
             sell_key = f"_SELL_{key_letter}_"
-            generated_tab[0] = generated_tab[0][:3]
+            generated_tab[0] = generated_tab[0][:4]
             generated_tab[0].append(sg.Button("Vender", key=sell_key))
         elif key_letter == "I":
             delete_key = f"_DELETE_{key_letter}_"
@@ -423,8 +423,7 @@ def main_window():
 # finalizar funciones adicionales
 # revision completa de bugs
 # Arreglar ventas cantidad de producto negativa
-# Arreglar finalizacion de venta
-# UnboundLocalError: local variable 'final_price' referenced before assignment
+# Revisar que descuento funcione de la misma manera
 
 
 main_window()

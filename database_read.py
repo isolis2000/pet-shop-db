@@ -44,8 +44,8 @@ def productos_ret_data(data: list):
     return ret_data
 
 
-def read_tipos_producto(user_input=None):
-    if user_input == None:
+def read_tipos_producto(user_input=""):
+    if user_input == "":
         return du.exec_query(
             """
             SELECT 
@@ -106,8 +106,8 @@ def find_product_type_bar_code(prod_name: str):
     return data[0][0]
 
 
-def read_productos(user_input=None):
-    if user_input == None:
+def read_productos(user_input=""):
+    if user_input == "":
         return du.exec_query(
             """
         SELECT 
@@ -137,6 +137,7 @@ def read_productos(user_input=None):
             WHERE
                 TP.nombre = '{user_input}'
                 OR TP.codigoBarras = '{user_input}'
+                OR P.id = {user_input}
             """
         )
 
@@ -176,8 +177,8 @@ def read_productos(user_input=None):
 #     )
 
 
-def read_past_receipts(receipt_num=None):
-    if receipt_num == None:
+def read_past_receipts(receipt_num=""):
+    if receipt_num == "":
         return du.exec_query(
             """
         SELECT  
@@ -217,32 +218,32 @@ def read_past_receipts(receipt_num=None):
         )
 
 
-def read_current_order(user_input=None):
-    if user_input == None:
+def read_current_order(user_input=""):
+    if user_input == "":
         return du.exec_query(
             """
-        SELECT  
-            CP.Cantidad,
-            TP.nombre,
-            round((TP.precio - P.descuento) * CP.Cantidad,2) AS subtotal,
-            P.descuento, 
-            TP.codigoBarras,
-            CP.id,
-            P.id
-        FROM 
-            Compras_Productos AS CP
-        INNER JOIN 
-            Compras AS C ON (C.id = CP.idCompra)
-        INNER JOIN
-            Productos AS P ON (P.id = CP.idProducto)
-        INNER JOIN
-            TiposProducto AS TP ON (TP.id = P.idTipoProducto)
-        WHERE   
-            C.id = (
-                SELECT MAX(C.id)  
-                FROM Compras AS C
-                WHERE C.estado = 'En Progreso');
-        """
+            SELECT  
+                CP.Cantidad,
+                TP.nombre,
+                round((TP.precio - P.descuento) * CP.Cantidad,2) AS subtotal,
+                P.descuento, 
+                TP.codigoBarras,
+                CP.id,
+                P.id
+            FROM 
+                Compras_Productos AS CP
+            INNER JOIN 
+                Compras AS C ON (C.id = CP.idCompra)
+            INNER JOIN
+                Productos AS P ON (P.id = CP.idProducto)
+            INNER JOIN
+                TiposProducto AS TP ON (TP.id = P.idTipoProducto)
+            WHERE   
+                C.id = (
+                    SELECT MAX(C.id)  
+                    FROM Compras AS C
+                    WHERE C.estado = 'En Progreso');
+            """
         )
     else:
         return du.exec_query(
@@ -295,8 +296,8 @@ def read_grooming():
     return []
 
 
-def read_clients(client_name=None):
-    if client_name == None:
+def read_clients(client_name=""):
+    if client_name == "":
         return du.exec_query(
             f"""
             SELECT
@@ -327,9 +328,9 @@ def read_clients(client_name=None):
         )
 
 
-def read_client_names(name=None):
+def read_client_names(name=""):
     query_res = []
-    if name == None:
+    if name == "":
         query_res = du.exec_query(
             """
             SELECT
@@ -370,28 +371,27 @@ def read_payment_types():
     return ret_list
 
 
-def read_mascotas():
-    return du.exec_query(
-        f"""
-        SELECT 
-            M.nombre,
-            C.nombre,
-            R.nombre,
-            M.notasAdicionales,
-            round(M.monto, 2)
-        FROM
-            Mascotaspeluqueria AS M
-        INNER JOIN 
-            Clientes AS C ON M.idCliente = C.id
-        INNER JOIN 
-            Razas AS R ON M.idRaza = R.id
-        """
-    )
-
-
-def read_mascotas_n(pet_name: str):
-    return du.exec_query(
-        f"""
+def read_mascotas(pet_name=""):
+    if pet_name == "":
+        return du.exec_query(
+            f"""
+            SELECT 
+                M.nombre,
+                C.nombre,
+                R.nombre,
+                M.notasAdicionales,
+                round(M.monto, 2)
+            FROM
+                Mascotaspeluqueria AS M
+            INNER JOIN 
+                Clientes AS C ON M.idCliente = C.id
+            INNER JOIN 
+                Razas AS R ON M.idRaza = R.id
+            """
+        )
+    else:
+        return du.exec_query(
+            f"""
         SELECT 
             M.nombre,
             C.nombre,
@@ -407,7 +407,7 @@ def read_mascotas_n(pet_name: str):
         WHERE
             M.nombre = '{pet_name}'
         """
-    )
+        )
 
 
 def find_payment_type_id(payment_name: str):

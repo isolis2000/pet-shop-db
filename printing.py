@@ -74,7 +74,14 @@ class PDF(FPDF):
         )
         self.ln()
 
-    def body(self, receipt_number: int, phone: str, name: str, products: list):
+    def body(
+        self,
+        receipt_number: int,
+        phone: str,
+        name: str,
+        products: list,
+        final_price: float,
+    ):
 
         self.set_font("Arial", "B", base_font_num)
         receiptText = f"{receipt_number:08}"
@@ -173,7 +180,6 @@ class PDF(FPDF):
         lineY = self.get_y() - height_per_obj / 2
         lineX = 1
         self.line(lineX, lineY, base_width - lineX, lineY)
-        return total_por_servicio
 
     def custom_footer(self, date_time: str):
         a1 = f"{'300 S centro del Adulto Mayor':^29}"
@@ -201,7 +207,11 @@ class PDF(FPDF):
 
 
 def generate_receipt(
-    receipt_number: int, client_name: str, products_list: list, date_time: str
+    receipt_number: int,
+    client_name: str,
+    products_list: list,
+    date_time: str,
+    final_price: float,
 ):
     print(f"RECEIPT: {products_list}")
     amount_of_items = len(products_list)
@@ -209,13 +219,11 @@ def generate_receipt(
     pdf = PDF(orientation="P", unit="mm", format=(base_width, final_height))
     pdf.add_page()
     pdf.custom_header()
-    final_price = pdf.body(receipt_number, "6362-9187", client_name, products_list)
+    pdf.body(receipt_number, "6362-9187", client_name, products_list, final_price)
     pdf.custom_footer(date_time)
     # pdf.lines()
     # pdf.header(modifiedHeight=final_height)
     pdf.output(f"facturas/{date_time}_{receipt_number}.pdf", "F")
-    print(f"Final price: {final_price}")
-    return final_price
     # use_printer('test.pdf')
 
 

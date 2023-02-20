@@ -5,42 +5,42 @@ import database_delete as dd
 import database_edit as de
 import operator
 
-sg.theme("Reddit")
-# sg.theme("Black")
+# sg.theme("Reddit")
+sg.theme("Black")
 
 
 # Search functions ---------------------------------------------------------------
 
 
-def search_products(search_input: str):
-    if search_input == "":
-        return dr.read_tipos_producto()
-    else:
-        return dr.read_tipos_producto_n(search_input)
+# def search_products(search_input: str):
+#     if search_input == "":
+#         return dr.read_tipos_producto()
+#     else:
+#         return dr.read_tipos_producto(search_input)
 
 
-def search_inventory(search_input: str):
-    if search_input == "":
-        return dr.read_productos()
-    else:
-        return dr.read_productos_n(search_input)
+# def search_inventory(search_input: str):
+#     if search_input == "":
+#         return dr.read_productos()
+#     else:
+#         return dr.read_productos(search_input)
 
 
-def search_current_sale(search_input: str):
-    if search_input == "":
-        return dr.read_current_order()
-    else:
-        return dr.read_current_order_n(search_input)
+# def search_current_sale(search_input: str):
+#     if search_input == "":
+#         return dr.read_current_order()
+#     else:
+#         return dr.read_current_order(search_input)
 
 
 def search(ending: str, search_input: str):
     print(f"search: ending-{ending}, search_input-{search_input}")
     if ending == "P":
-        return search_products(search_input)
+        return dr.read_tipos_producto(search_input)
     elif ending == "I":
-        return search_inventory(search_input)
+        return dr.read_productos(search_input)
     elif ending == "S":
-        return search_current_sale(search_input)
+        return dr.read_current_order(search_input)
 
 
 # Insert functions ----------------------------------------------------------------
@@ -333,12 +333,12 @@ def main_window():
         #     data_selected = [data_sale[row] for row in values[event]]
         elif event == "_EDIT_S_" and data_selected != []:
             de.edit_sale_prod_quantity(data_selected[0][5])
-            data_sale = search_current_sale(values["_INPUT_S_"])
+            data_sale = dr.search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
         elif event == "_SELL_S_":
             de.update_inventory_after_sale()
             de.edit_estado_compra("finalizado")
-            data_sale = search_current_sale(values["_INPUT_S_"])
+            data_sale = dr.search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
 
         # print(f"data_selected: {data_selected}")
