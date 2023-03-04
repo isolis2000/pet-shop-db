@@ -82,15 +82,7 @@ def finalizar_compra() -> bool:
     payments_list = dr.read_payment_types()
     clients_list = dr.read_client_names()
     print(f"lists: {payments_list}, {clients_list}")
-    answers = we.popup_finalize_sale(payments_list, clients_list)
-    if answers == None:
-        du.popup_message("Operacion cancelada")
-        return
 
-    payment_type = answers[0]
-    client = answers[1]
-    payment = answers[2]
-    change = 0
     keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
     res_lst = []
     for curr_item in curr_sale:
@@ -98,18 +90,34 @@ def finalizar_compra() -> bool:
 
     final_price = 0.0
     for item in res_lst:
-        final_price += item["subtotal"] - item["descuento"]
+        final_price += item["subtotal"] * (1 - item["descuento"] / 100)
+
+    answers = we.popup_finalize_sale(payments_list, clients_list, final_price)
+    if answers == None:
+        du.popup_message("Operacion cancelada")
+        return False
+
+    print(f"payment: {answers}")
+    payment_type = answers[0]
+    client = answers[1]
 
     print(f"final_price: {final_price}")
-    if payment != 0:
-        change = float(payment) - final_price
+    confirmation_text = ""
+    if len(answers) == 3:
+        payment = abs(float(answers[2]))
+        change = 0
+        if payment != 0:
+            change = payment - final_price
 
-    if change == 0:
-        confirmation_text = "¿Seguro que desea finalizar la compra?"
-    else:
-        change_txt = f"El vuelto es {change}"
-        confirmation_text = f"""{change_txt:^40},
-        {'¿Seguro que desea finalizar la compra?':^40}"""
+        if change < 0:
+            du.popup_message(f"Hace falta ₡{abs(change)}, favor intente de nuevo")
+            return False
+        elif change == 0:
+            confirmation_text = "¿Seguro que desea finalizar la compra?"
+        else:
+            change_txt = f"El vuelto es {change}"
+            confirmation_text = f"""{change_txt:^40},
+            {'¿Seguro que desea finalizar la compra?':^40}"""
 
     if du.confirmation_popup(confirmation_text):
 
@@ -138,3 +146,6 @@ def finalizar_compra() -> bool:
         """
         print(str_exec)
         du.exec_query(str_exec)
+        return True
+    else:
+        return False

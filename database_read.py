@@ -107,6 +107,7 @@ def find_product_type_bar_code(prod_name: str):
 
 
 def read_productos(user_input=""):
+    print(f"input_type: {type(user_input)}")
     if user_input == "":
         return du.exec_query(
             """
@@ -115,7 +116,8 @@ def read_productos(user_input=""):
             P.fechaCompra, 
             P.fechaVencimiento, 
             P.descuento, 
-            P.cantidad
+            P.cantidad,
+            P.id
         FROM 
             TiposProducto AS TP
             INNER JOIN Productos AS P ON TP.id = P.idTipoProducto
@@ -137,7 +139,7 @@ def read_productos(user_input=""):
             WHERE
                 TP.nombre = '{user_input}'
                 OR TP.codigoBarras = '{user_input}'
-                OR P.id = {user_input}
+                OR P.id = '{user_input}'
             """
         )
 
@@ -436,6 +438,25 @@ def find_client_id(client_name: str):
         """
     )
     return query_res[0][0]
+
+
+def closing_time():
+    query_res = du.exec_query(
+        f"""
+        SELECT 
+            SUM(C.totalAPagar) AS Pago,
+            TP.nombre AS TipoPago
+        FROM
+            Compras AS C
+        INNER JOIN 
+            TiposPago AS TP ON (TP.id = C.idTipoPago)
+        WHERE
+            C.fecha = '{du.get_today_date()}'
+         GROUP BY 
+            TP.nombre
+        """
+    )
+    print(query_res)
 
 
 def read_registro():

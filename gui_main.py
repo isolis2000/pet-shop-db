@@ -398,13 +398,23 @@ def main_window():
         # elif event == "_TABLE_S_":
         #     data_selected = [data_sale[row] for row in values[event]]
         elif event == "_EDIT_S_" and data_selected != []:
+            print(tup)
             de.edit_sale_prod_quantity(data_selected[0][5])
             data_sale = search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
         elif event == "_SELL_S_":
-            de.finalizar_compra()
-            data_sale = search_current_sale(values["_INPUT_S_"])
-            window["_TABLE_S_"].update(data_sale)
+            print(f"tup: {tup}")
+
+            current_sale = dr.read_current_order()
+            print(f"cs: {current_sale}")
+            if len(current_sale) > 0:
+                de.finalizar_compra()
+                data_sale = search_current_sale(values["_INPUT_S_"])
+                window["_TABLE_S_"].update(data_sale)
+        elif event == "_GENERATE_CODES_":
+            print("Generate Codes")
+        elif event == "_CLOSING_":
+            print(dr.closing_time())
 
         # print(f"data_selected: {data_selected}")
         # print(f"data_products: {data_products}")
