@@ -399,6 +399,7 @@ def main_window():
         #     data_selected = [data_sale[row] for row in values[event]]
         elif event == "_EDIT_S_" and data_selected != []:
             print(tup)
+            print(tup)
             de.edit_sale_prod_quantity(data_selected[0][5])
             data_sale = search_current_sale(values["_INPUT_S_"])
             window["_TABLE_S_"].update(data_sale)
