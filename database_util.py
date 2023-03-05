@@ -54,14 +54,25 @@ def verify_dict(dictionary: dict):
 
 
 def popup_message(message: str, duration_seconds=1):
-    sg.popup(
-        message,
-        auto_close=True,
-        auto_close_duration=duration_seconds,
-        no_titlebar=True,
-        button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
-        any_key_closes=True,
-    )
+    if duration_seconds == 0:
+        sg.popup(
+            message,
+            auto_close=False,
+            no_titlebar=True,
+            button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
+            any_key_closes=True,
+            font="Courier 14",
+        )
+    else:
+        sg.popup(
+            message,
+            auto_close=True,
+            auto_close_duration=duration_seconds,
+            no_titlebar=True,
+            button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
+            any_key_closes=True,
+            font="Courier 14",
+        )
 
 
 def popup_input(message: str) -> str:

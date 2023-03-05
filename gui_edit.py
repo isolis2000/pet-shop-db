@@ -150,7 +150,7 @@ def popup_select(the_list: list, select_multiple=False):
     event, values = window.read()
     window.close()
     del window
-    if select_multiple or values["_LIST_"] is None:
+    if select_multiple or values["_LIST_"] is None or len(values["_LIST_"]) == 0:
         return values["_LIST_"]
     else:
         return values["_LIST_"][0]
@@ -175,8 +175,9 @@ def popup_select_combo(the_list: list):
     return values["_SELECTION_"]
 
 
-def popup_finalize_sale(payments_list: list, clients_list: list):
+def popup_finalize_sale(payments_list: list, clients_list: list, final_price: float):
     layout = [
+        [sg.Text(f"Precio total: ₡{final_price}")],
         [
             sg.Text("Tipo de pago:"),
             sg.Combo(

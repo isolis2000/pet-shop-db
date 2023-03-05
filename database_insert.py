@@ -121,7 +121,9 @@ def add_to_venta(empty=False):
         du.popup_message("Operación cancelada")
         return
 
+    print(f"input: {popup_input}")
     products_list = dr.read_productos(popup_input)
+    print(f"list: {products_list}")
 
     if products_list == []:
         du.popup_message("No existe ningún producto con este código")
@@ -155,6 +157,11 @@ def add_to_venta(empty=False):
         product_to_add = we.popup_select(products_list)
     else:
         product_to_add = products_list[0]
+
+    print(f"Pl: {product_to_add}")
+
+    if product_to_add == None or product_to_add == []:
+        return
 
     product_quantity = int(product_to_add[4])
     amount_to_add = 0
