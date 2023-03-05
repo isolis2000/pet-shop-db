@@ -57,21 +57,25 @@ def popup_message(message: str, duration_seconds=1):
     if duration_seconds == 0:
         sg.popup(
             message,
+            title="",
             auto_close=False,
-            no_titlebar=True,
+            no_titlebar=False,
             button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
             any_key_closes=True,
             font="Courier 14",
+            grab_anywhere=True,
         )
     else:
         sg.popup(
             message,
+            title="",
             auto_close=True,
             auto_close_duration=duration_seconds,
             no_titlebar=True,
             button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
             any_key_closes=True,
             font="Courier 14",
+            grab_anywhere=True,
         )
 
 
