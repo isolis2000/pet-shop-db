@@ -14,16 +14,16 @@ sg.theme("Black")
 
 # def search_products(search_input: str):
 #     if search_input == "":
-#         return dr.read_tipos_producto()
+#         return dr.read_product_types()
 #     else:
-#         return dr.read_tipos_producto(search_input)
+#         return dr.read_product_types(search_input)
 
 
 # def search_inventory(search_input: str):
 #     if search_input == "":
-#         return dr.read_productos()
+#         return dr.read_products_in_inventory()
 #     else:
-#         return dr.read_productos(search_input)
+#         return dr.read_products_in_inventory(search_input)
 
 
 # def search_current_sale(search_input: str):
@@ -36,9 +36,9 @@ sg.theme("Black")
 def search(ending: str, search_input: str):
     print(f"search: ending-{ending}, search_input-{search_input}")
     if ending == "P":
-        return dr.read_tipos_producto(search_input)
+        return dr.read_product_types(search_input)
     elif ending == "I":
-        return dr.read_productos(search_input)
+        return dr.read_products_in_inventory(search_input)
     elif ending == "S":
         return dr.read_current_order(search_input)
 
@@ -48,11 +48,11 @@ def search(ending: str, search_input: str):
 
 def new_insert(ending: str, new_sale=False):
     if ending == "P":
-        di.insert_tipo_producto()
+        di.insert_product_type()
     elif ending == "I":
-        di.insert_producto()
+        di.insert_product()
     elif ending == "S":
-        di.add_to_venta(new_sale)
+        di.add_to_sale(new_sale)
 
 
 # Generic functions ---------------------------------------------------------------
@@ -85,8 +85,8 @@ def main_window():
     # Click para revisar datos de cliente
     headings_clients = ["Nombre", "Telefono", "Mascotas", "# de compras"]
 
-    data_products = dr.read_tipos_producto()
-    data_inventory = dr.read_productos()
+    data_products = dr.read_product_types()
+    data_inventory = dr.read_products_in_inventory()
     data_sale = dr.read_current_order()
     data_grooming = dr.read_grooming()
     data_clients = dr.read_clients()
@@ -167,7 +167,7 @@ def main_window():
         ]
     ]
 
-    window = sg.Window("Ventana Principal", layout, font="Courier 12", finalize=True)
+    window = sg.Window("Ventana Principal", layout, font="Courier 13", finalize=True)
 
     window["_INPUT_P_"].bind("<Return>", "_Enter")
     window["_INPUT_I_"].bind("<Return>", "_Enter")
@@ -288,7 +288,7 @@ def main_window():
         #     data_products = search_products(values["_INPUT_P_"])
         #     window["_TABLE_P_"].update(data_products)
         # elif event == "_ADD_P_":
-        #     di.insert_tipo_producto()
+        #     di.insert_product_type()
         #     data_products = search_products(values["_INPUT_P_"])
         #     window["_TABLE_P_"].update(data_products)
         elif event == "_DELETE_P_":
@@ -304,14 +304,14 @@ def main_window():
         # window["_TABLE_P_"].update(data_products)
         elif event == "_EDIT_P_" and data_selected != []:
             print(data_selected)
-            de.edit_tipo_producto(data_selected[0])
+            de.edit_product_type(data_selected[0])
 
         # Inventory Events ---------------------------------------------------------------------
         # elif event == "_SEARCH_I_" or event == "_INPUT_I_" + "_Enter":
         #     data_inventory = search_inventory(values["_INPUT_I_"])
         #     window["_TABLE_I_"].update(data_inventory)
         # elif event == "_ADD_I_":
-        #     di.insert_producto()
+        #     di.insert_product()
         #     data_inventory = search_inventory(values["_INPUT_I_"])
         #     window["_TABLE_I_"].update(data_inventory)
         # elif event == "_TABLE_I_":
@@ -324,9 +324,9 @@ def main_window():
         #     window["_TABLE_S_"].update(data_sale)
         # elif event == "_ADD_S_":
         #     if data_sale == []:
-        #         di.add_to_venta(True)
+        #         di.add_to_sale(True)
         #     else:
-        #         di.add_to_venta()
+        #         di.add_to_sale()
         #     data_sale = search_current_sale(values["_INPUT_S_"])
         #     window["_TABLE_S_"].update(data_sale)
         # elif event == "_TABLE_S_":

@@ -4,9 +4,14 @@ import database_insert as di
 import database_delete as dd
 import database_edit as de
 import operator
+import barcodes as bc
 
-# sg.theme("Reddit")
-sg.theme("Black")
+# themes = [
+#     sg.theme("Reddit"),
+#     sg.theme("LightGreen"),
+#     sg.theme("LightGrey5"),
+#     sg.theme("DarkTanBlue")
+#     ]
 
 # # New function added
 # def repack(widget, option):
@@ -18,79 +23,82 @@ sg.theme("Black")
 # Search functions ---------------------------------------------------------------
 
 
-def search_products(search_input: str):
-    if search_input == "":
-        return dr.read_tipos_producto()
-    else:
-        return dr.read_tipos_producto(search_input)
+# def search_products(search_input: str):
+#     if search_input == "":
+#         return dr.read_product_types()
+#     else:
+#         return dr.read_product_types(search_input)
 
 
-def search_inventory(search_input: str):
-    if search_input == "":
-        return dr.read_productos()
-    else:
-        return dr.read_productos(search_input)
+# def search_inventory(search_input: str):
+#     if search_input == "":
+#         return dr.read_products_in_inventory()
+#     else:
+#         return dr.read_products_in_inventory(search_input)
 
 
-def search_current_sale(search_input: str):
-    if search_input == "":
-        return dr.read_current_order()
-    else:
-        return dr.read_current_order(search_input)
+# def search_current_sale(search_input: str):
+#     if search_input == "":
+#         return dr.read_current_order()
+#     else:
+#         return dr.read_current_order(search_input)
 
 
-def search_clients(search_input: str):
-    if search_input == "":
-        return dr.read_clients()
-    else:
-        return dr.read_clients(search_input)
+# def search_clients(search_input: str):
+#     if search_input == "":
+#         return dr.read_clients()
+#     else:
+#         return dr.read_clients(search_input)
 
 
-def search_pets(search_input: str):
-    if search_input == "":
-        return dr.read_mascotas()
-    else:
-        return dr.read_mascotas(search_input)
+# def search_pets(search_input: str):
+#     if search_input == "":
+#         return dr.read_pets()
+#     else:
+#         return dr.read_pets(search_input)
 
 
-def search_receipts(search_input: str):
-    if search_input == "":
-        return dr.read_past_receipts()
-    else:
-        return dr.read_past_receipts(search_input)
+# def search_receipts(search_input: str):
+#     if search_input == "":
+#         return dr.read_past_receipts()
+#     else:
+#         return dr.read_past_receipts(search_input)
 
 
 def search(ending: str, search_input: str):
     print(f"search: ending-{ending}, search_input-{search_input}")
     if ending == "P":
-        return search_products(search_input)
+        return dr.read_product_types(search_input)
     elif ending == "I":
-        return search_inventory(search_input)
+        return dr.read_products_in_inventory(search_input)
     elif ending == "S":
-        return search_current_sale(search_input)
+        return dr.read_current_order(search_input)
     elif ending == "C":
-        return search_clients(search_input)
+        return dr.read_clients(search_input)
     elif ending == "G":
-        return search_pets(search_input)
+        return dr.read_pets(search_input)
     elif ending == "R":
-        return search_receipts(search_input)
-
-
-# Insert functions ----------------------------------------------------------------
+        return dr.read_past_receipts(search_input)
 
 
 def new_insert(ending: str, new_sale=False):
     if ending == "P":
-        di.insert_tipo_producto()
+        di.insert_product_type()
     elif ending == "I":
-        di.insert_producto()
+        di.insert_product()
     elif ending == "S":
-        di.add_to_venta(new_sale)
+        di.add_to_sale(new_sale)
     elif ending == "C":
         di.insert_client()
 
 
-# Generic functions ---------------------------------------------------------------
+def edit(ending: str, data_selected: list):
+    if ending == "P":
+        de.edit_product_type(data_selected)
+    elif ending == "S":
+        de.edit_sale_prod_quantity(data_selected[5])
+    elif ending == "C":
+        de.edit_client(data_selected[0])
 
 
 def sort_table(table, cols):
@@ -122,8 +130,8 @@ def main_window():
     # Click para revisar datos de cliente
     # headings_receipts = ["Fecha", ""]
 
-    data_products = dr.read_tipos_producto()
-    data_inventory = dr.read_productos()
+    data_products = dr.read_product_types()
+    data_inventory = dr.read_products_in_inventory()
     data_sale = dr.read_current_order()
     data_grooming = dr.read_grooming()
     data_clients = dr.read_clients()
@@ -134,7 +142,7 @@ def main_window():
         [headings_inventory, data_inventory, "I", "Inventario"],
         [headings_sale, data_sale, "S", "Venta"],
         [headings_clients, data_clients, "C", "Clientes"],
-        [headings_grooming, data_grooming, "G", "Peluquería"],
+        # [headings_grooming, data_grooming, "G", "Peluquería"],
         [headings_receipts, data_receipts, "R", "Facturas"],
     ]
     generated_tabs_layout = []
@@ -149,7 +157,7 @@ def main_window():
         table_key = f"_TABLE_{key_letter}_"
         tab_key = f"_TAB_{key_letter}_"
 
-        generated_tab = None
+        # generated_tab = None
 
         generated_table = sg.Table(
             values=tup[1],
@@ -194,6 +202,8 @@ def main_window():
     other_functions_tab = [
         [sg.Button("Generar codigos", pad=(5, 10), key="_GENERATE_CODES_")],
         [sg.Button("Cierre de Caja", pad=(5, 10), key="_CLOSING_")],
+        # [sg.Text("Color de interfaz")],
+        # [sg.Slider((0, len(sg.theme_list())), orientation="h",enable_events=True, disable_number_display=True , key='_COLOR_SLIDER_')]
     ]
 
     other_functions_layout = [
@@ -235,7 +245,7 @@ def main_window():
     window["_INPUT_P_"].bind("<Return>", "_Enter")
     window["_INPUT_I_"].bind("<Return>", "_Enter")
     window["_INPUT_S_"].bind("<Return>", "_Enter")
-    window["_INPUT_G_"].bind("<Return>", "_Enter")
+    # window["_INPUT_G_"].bind("<Return>", "_Enter")
     window["_INPUT_C_"].bind("<Return>", "_Enter")
 
     window["_INPUT_P_"].set_focus()
@@ -314,6 +324,17 @@ def main_window():
                 if tup[2] == ending:
                     data_selected = [tup[1][row] for row in values[event]]
 
+        elif event.startswith("_EDIT"):
+            ending = event[-2]
+            for tup in generate_tabs_list:
+                if tup[2] == ending and len(data_selected) != 0:
+                    edit(ending, data_selected[0])
+                    tup[1] = search(ending, values[f"_INPUT_{ending}_"])
+                    window[f"_TABLE_{ending}_"].update(tup[1])
+
+        # elif event == "_COLOR_SLIDER_":
+        #     sg.theme(sg.theme_list()[int(values[event])])
+
         # if event[0] == "_TABLE_P_":
         #     if event[2][0] == -1 and event[2][1] != -1:
         #         col_num_clicked = event[2][1]
@@ -355,7 +376,7 @@ def main_window():
         #     data_products = search_products(values["_INPUT_P_"])
         #     window["_TABLE_P_"].update(data_products)
         # elif event == "_ADD_P_":
-        #     di.insert_tipo_producto()
+        #     di.insert_product_type()
         #     data_products = search_products(values["_INPUT_P_"])
         #     window["_TABLE_P_"].update(data_products)
         elif event == "_DELETE_P_":
@@ -369,15 +390,15 @@ def main_window():
         #     data_selected = [data_products[row] for row in values[event]]
         #     print(f"data_selected: {data_selected}")
         # window["_TABLE_P_"].update(data_products)
-        elif event == "_EDIT_P_" and data_selected != []:
-            de.edit_tipo_producto(data_selected[0])
+        # elif event == "_EDIT_P_" and data_selected != []:
+        #     de.edit_product_type(data_selected[0])
 
         # Inventory Events ---------------------------------------------------------------------
         # elif event == "_SEARCH_I_" or event == "_INPUT_I_" + "_Enter":
         #     data_inventory = search_inventory(values["_INPUT_I_"])
         #     window["_TABLE_I_"].update(data_inventory)
         # elif event == "_ADD_I_":
-        #     di.insert_producto()
+        #     di.insert_product()
         #     data_inventory = search_inventory(values["_INPUT_I_"])
         #     window["_TABLE_I_"].update(data_inventory)
         # elif event == "_TABLE_I_":
@@ -390,19 +411,19 @@ def main_window():
         #     window["_TABLE_S_"].update(data_sale)
         # elif event == "_ADD_S_":
         #     if data_sale == []:
-        #         di.add_to_venta(True)
+        #         di.add_to_sale(True)
         #     else:
-        #         di.add_to_venta()
+        #         di.add_to_sale()
         #     data_sale = search_current_sale(values["_INPUT_S_"])
         #     window["_TABLE_S_"].update(data_sale)
         # elif event == "_TABLE_S_":
         #     data_selected = [data_sale[row] for row in values[event]]
-        elif event == "_EDIT_S_" and data_selected != []:
-            print(tup)
-            print(tup)
-            de.edit_sale_prod_quantity(data_selected[0][5])
-            data_sale = search_current_sale(values["_INPUT_S_"])
-            window["_TABLE_S_"].update(data_sale)
+        # elif event == "_EDIT_S_" and data_selected != []:
+        #     print(tup)
+        #     print(tup)
+        #     de.edit_sale_prod_quantity(data_selected[0][5])
+        #     data_sale = search(values["_INPUT_S_"])
+        #     window["_TABLE_S_"].update(data_sale)
         elif event == "_SELL_S_":
             print(f"tup: {tup}")
 
@@ -410,10 +431,10 @@ def main_window():
             print(f"cs: {current_sale}")
             if len(current_sale) > 0:
                 de.finalizar_compra()
-                data_sale = search_current_sale(values["_INPUT_S_"])
+                data_sale = search(values["_INPUT_S_"])
                 window["_TABLE_S_"].update(data_sale)
         elif event == "_GENERATE_CODES_":
-            print("Generate Codes")
+            bc.generate_bar_codes_pdf()
         elif event == "_CLOSING_":
             dr.closing_time()
 
@@ -438,3 +459,5 @@ def main_window():
 
 
 main_window()
+
+# Arreglar edit tipos producto

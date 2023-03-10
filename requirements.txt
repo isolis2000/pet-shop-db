@@ -1,2 +1,4 @@
 fpdf==1.7.2
+Pillow==9.4.0
 PySimpleGUI==4.60.4
+python-barcode==0.14.0

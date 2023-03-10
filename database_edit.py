@@ -4,15 +4,15 @@ import database_util as du
 import printing as pr
 
 
-def edit_tipo_producto(data_selected):
+def edit_product_type(data_selected):
 
     print(f"data_selected: {data_selected}")
-    id_producto = dr.find_tipo_producto_id(data_selected[4])
-    data_product = dr.read_tipos_producto(data_selected[4])
-    dict_tipos = we.edit_tipo_producto(data_product[0], du.iva)
+    id_producto = dr.find_product_type_id(data_selected[4])
+    data_product = dr.read_product_types(data_selected[4])
+    dict_tipos = we.edit_product_type(data_product[0], du.iva)
 
     if dict_tipos == "Cancel":
-        du.popup_message("Operación cancelada")
+        du.popup_message("Operación Cancelada")
     elif du.verify_dict(dict_tipos):
         print(dict_tipos)
         print("NOMBRE: " + dict_tipos["nombre"])
@@ -63,7 +63,7 @@ def update_inventory_after_sale():
 
 
 def edit_sale_prod_quantity(prod_id: int):
-    product = dr.read_productos(prod_id)[0]
+    product = dr.read_products_in_inventory(prod_id)[0]
     product_quantity = int(product[4])
     new_value = int(du.popup_input("Escriba la nueva cantidad de este producto"))
     if new_value <= product_quantity:
@@ -75,6 +75,29 @@ def edit_sale_prod_quantity(prod_id: int):
         du.exec_query(str_exec)
     else:
         du.popup_message("Cantidad del producto excede la cantidad en inventario")
+
+
+def edit_client(client_name: str):
+    selected_client = dr.read_clients(client_name)[0]
+    user_input = we.edit_client(selected_client)
+
+    print(f"usr_input: {selected_client}")
+    if user_input == "Cancel" or not (
+        user_input["phone"].isnumeric() or user_input["phone"] == ""
+    ):
+        du.popup_message("Operación Cancelada")
+        return
+    if user_input["phone"] == "":
+        user_input["phone"] = "NULL"
+    str_exec = f"""
+    UPDATE Clientes
+        SET 
+            nombre = '{user_input["name"]}',
+            telefono = {user_input["phone"]}
+        WHERE id = {selected_client[2]};
+    """
+    print(str_exec)
+    du.exec_query(str_exec)
 
 
 def finalizar_compra() -> bool:
@@ -93,8 +116,8 @@ def finalizar_compra() -> bool:
         final_price += item["subtotal"] * (1 - item["descuento"] / 100)
 
     answers = we.popup_finalize_sale(payments_list, clients_list, final_price)
-    if answers == None:
-        du.popup_message("Operacion cancelada")
+    if answers is None:
+        du.popup_message("Operación Cancelada")
         return False
 
     print(f"payment: {answers}")

@@ -5,19 +5,18 @@ import datetime
 base64_str = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB0ElEQVRIS+1VvU4CQRDe7QQTf3I+gyaowUQTbdTIG2ClrSWlhfoKkmhrZ6uVvIFGbCg0kR8x+gyehsLD0KzfzB24e7d3QEFMjAfF3Ny38+18M7sjO52OEiN8pI2gXLkHpRQba8sDUZcrD8Ap4FcieCvBHQjUUAS0ITEYgZvPiafDIi+YPz4Aka+gxE+3yUfv5G8eFYUCjPBO6drIwsjAzW8JJaW42i1gtRLbl2cUhUMJ+AMuYjPs0k4B64C/8PEzGolB8AYCt/0lbvf2eReb56fCSaXMaAikE7leFy+BPwF+DAQ3vSwiBPTlxf1gwJwzHS0aMlHIjqShP9mv78ArKWadKfbrMlklYgVI1J4syRKFpUuQKMdy6AWNCB5TdL0BYjNofXp9+152JaI0qbNIrpA9kU7ba8AEDA7qarODz6FGMlSKJ/Da3J7VepPDZBczotZoco9HbGCog9mv2ZThRJo6z3+MIrc8ZIBVtfozHyJarJOxja1nFwK/xaagk+O/JhFqQNo+BhItIYM4u9pAltCOMLpNARJq8C9RhpvgD0tEo5K6ojukk06rf5MGB1+zqaPWV39GbWRkEol52YWupyRWEIbnsnUm973xhgCMnOAbzkiRYGtBf20AAAAASUVORK5CYII="
 
 
-def new_tipo_producto():
+def new_product_type():
 
     layout = [
         [sg.Text("Insertar Tipo de Producto")],
         [sg.Text("Nombre:"), sg.InputText(key="nombre")],
         [sg.Text("Precio:"), sg.InputText(key="precio")],
         [sg.Text("Porcentaje de Ganancia:"), sg.InputText(key="ganancia")],
-        [sg.Text("Codigo de Barras:"), sg.InputText(key="codigoBarras")],
         [sg.Text("Nombre del Proveedor:"), sg.InputText(key="proveedor")],
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 13")
     submited = False
     event, values = window.read()
 
@@ -32,7 +31,7 @@ def new_tipo_producto():
     return values
 
 
-def new_producto():
+def new_product():
 
     layout = [
         [sg.Text("Agregar Producto")],
@@ -56,7 +55,7 @@ def new_producto():
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 13")
     submited = False
     event, values = window.read()
 
@@ -75,7 +74,7 @@ def new_producto():
     return values
 
 
-def edit_tipo_producto(product: list, iva: int):
+def edit_product_type(product: list, iva: int):
     print(f"product: {product}")
     nombre = product[0]
     precio = str(product[1] * (1 - iva))
@@ -84,7 +83,7 @@ def edit_tipo_producto(product: list, iva: int):
     proveedor = product[4]
 
     layout = [
-        [sg.Text("Insertar Tipo de Producto")],
+        [sg.Text("Editar Tipo de Producto")],
         [sg.Text("Nombre:"), sg.InputText(nombre, key="nombre")],
         [sg.Text("Precio:"), sg.InputText(precio, key="precio")],
         [
@@ -93,15 +92,46 @@ def edit_tipo_producto(product: list, iva: int):
         ],
         [sg.Text("Codigo de Barras:"), sg.InputText(codigo_barras, key="codigoBarras")],
         [sg.Text("Proveedor:"), sg.InputText(proveedor, key="proveedor")],
-        [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
+        [sg.Button("Editar", key="_EDIT_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 13")
     submited = False
     event, values = window.read()
 
     while not submited:
-        if event == "_ADD_":
+        if event == "_EDIT_":
+            submited = True
+        elif event == "_CANCEL_" or event == sg.WIN_CLOSED:
+            values = "Cancel"
+            submited = True
+
+    window.close()
+    return values
+
+
+def edit_client(selected_client: list):
+    name = selected_client[0]
+    phone_num = selected_client[1]
+    if phone_num == "Sin numero":
+        phone_num = ""
+    layout = [
+        [
+            sg.Text(
+                "Cambie los datos que desee y recuerde que el número\ntelefónico va sin separacion de ningún tipo"
+            )
+        ],
+        [sg.Text("Nombre:"), sg.InputText(name, key="name")],
+        [sg.Text("Número:"), sg.InputText(phone_num, key="phone")],
+        [sg.Button("Editar", key="_EDIT_"), sg.Button("Cancelar", key="_CANCEL_")],
+    ]
+
+    window = sg.Window("", layout, font="Courier 13")
+    submited = False
+    event, values = window.read()
+
+    while not submited:
+        if event == "_EDIT_":
             submited = True
         elif event == "_CANCEL_" or event == sg.WIN_CLOSED:
             values = "Cancel"
@@ -113,13 +143,13 @@ def edit_tipo_producto(product: list, iva: int):
 
 def new_client():
     layout = [
-        [sg.Text("Agregar Cliente")],
+        [sg.Text("Digite los datos del cliente")],
         [sg.Text("Nombre:"), sg.InputText(key="name")],
-        [sg.Text("Teléfono:"), sg.InputText(key="phone")],
+        [sg.Text("Número:"), sg.InputText(key="phone")],
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
-    window = sg.Window("", layout, font="Courier 12")
+    window = sg.Window("", layout, font="Courier 13")
     event, values = window.read()
 
     while True:
@@ -216,6 +246,9 @@ def popup_finalize_sale(payments_list: list, clients_list: list, final_price: fl
         window.close()
         final_values.append(values["_PAYMENT_"])
     return final_values
+
+
+# edit_client(["1","2"])
 
 
 # usage examples

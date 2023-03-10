@@ -48,7 +48,7 @@ def insert_registro(message: str):
 
 def verify_dict(dictionary: dict):
     for key in dictionary:
-        if dictionary[key] == None:
+        if dictionary[key] is None:
             return False
     return True
 
@@ -87,5 +87,5 @@ def confirmation_popup(message: str) -> bool:
     ans_str = sg.popup(message, custom_text=("Si", "No"), no_titlebar=True)
     if ans_str == "Si":
         return True
-    elif ans_str == "No" or ans_str == None:
+    elif ans_str == "No" or ans_str is None:
         return False

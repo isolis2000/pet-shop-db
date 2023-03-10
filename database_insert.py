@@ -1,10 +1,10 @@
 import gui_edit as we
 import database_read as dr
 import database_util as du
-import datetime
+import barcodes as bc
 
 
-def insert_proveedor(name: str):
+def insert_provider(name: str):
     du.exec_query(
         f"""
     INSERT INTO Proveedores (
@@ -17,24 +17,30 @@ def insert_proveedor(name: str):
     )
 
 
-def insert_tipo_producto():
+def insert_product_type():
 
-    dict_tipos = we.new_tipo_producto()
+    dict_tipos = we.new_product_type()
     if dict_tipos == "Cancel":
-        du.popup_message("Operación cancelada")
+        du.popup_message("Operación Cancelada")
         return
 
     provider_name = dict_tipos["proveedor"]
-    proveedor_res = dr.find_proveedor_id(provider_name)
+    proveedor_res = dr.find_provider_id(provider_name)
     print(f"proveedor_res: {proveedor_res}")
     if proveedor_res == []:
-        insert_proveedor(provider_name)
-    id_proveedor = dr.find_proveedor_id(provider_name)[0][0]
+        insert_provider(provider_name)
 
-    print(f"id_proveedor: {id_proveedor}")
     if du.verify_dict(dict_tipos):
         print(dict_tipos)
         print("NOMBRE: " + dict_tipos["nombre"])
+
+        name = dict_tipos["nombre"]
+        price = (
+            float(dict_tipos["precio"])
+            + float(dict_tipos["precio"]) * float(dict_tipos["ganancia"]) / 100
+        ) * (1 + du.iva)
+        profit = float(dict_tipos["precio"]) * float(dict_tipos["ganancia"]) / 100
+        id_provider = dr.find_provider_id(provider_name)[0][0]
 
         # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
         # (dict_tipos['nombre'], dict_tipos['precio'], dict_tipos['ganancia'], dict_tipos['codigoBarras'])
@@ -42,6 +48,13 @@ def insert_tipo_producto():
         # query_str = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
         #                 (dict_tipos['nombre'], str(float(dict_tipos['precio']) + float(dict_tipos['precio']) * float(dict_tipos['ganancia'])/100),
         #                  str(float(dict_tipos['precio']) * float(dict_tipos['ganancia'])/100), dict_tipos['codigoBarras'])"
+        query_str = "SELECT MAX(seq)  FROM SQLITE_SEQUENCE WHERE name='TiposProducto'"
+        id_to_insert = 1
+        query_res = du.exec_query(query_str)[0][0]
+        if query_res is not None:
+            id_to_insert = int(query_res) + 1
+        bar_code = bc.generate_code(id_to_insert, name)
+
         query_str = f"""
             INSERT INTO TiposProducto (
                 nombre, 
@@ -50,15 +63,11 @@ def insert_tipo_producto():
                 codigoBarras,
                 idProveedor) 
             VALUES (
-                '{dict_tipos["nombre"]}',
-                {(float(dict_tipos["precio"]) 
-                + float(dict_tipos["precio"]) 
-                * float(dict_tipos["ganancia"])/100)
-                * (1 + du.iva)},
-                {float(dict_tipos["precio"]) 
-                * float(dict_tipos["ganancia"])/100}, 
-                '{dict_tipos["codigoBarras"]}',
-                {id_proveedor})
+                '{name}',
+                {price},
+                {profit},
+                {bar_code},
+                {id_provider})
         """
         print(query_str)
         if du.exec_query(query_str) != None:
@@ -67,7 +76,6 @@ def insert_tipo_producto():
                     nombre: {dict_tipos["nombre"]}
                     precio: {dict_tipos["precio"]}
                     ganancia: {dict_tipos["ganancia"]}
-                    codigo de barras: {dict_tipos["codigoBarras"]}
                 """
             du.insert_registro(registry_str)
         else:
@@ -78,13 +86,13 @@ def insert_tipo_producto():
         )
 
 
-def insert_producto():
+def insert_product():
 
-    dict_product = we.new_producto()
+    dict_product = we.new_product()
     if dict_product == "Cancel":
-        du.popup_message("Operación cancelada")
+        du.popup_message("Operación Cancelada")
     elif du.verify_dict(dict_product):
-        id_tipo_producto = dr.find_tipo_producto_id(dict_product["productCode"])
+        id_tipo_producto = dr.find_product_type_id(dict_product["productCode"])
         if id_tipo_producto != None:
             query_str = f"""
                 INSERT INTO Productos (
@@ -100,7 +108,7 @@ def insert_producto():
                 {str(id_tipo_producto)})
             """
             print(query_str)
-            if du.exec_query(query_str) == None:
+            if du.exec_query(query_str) is None:
                 du.popup_message(
                     "Producto no se pudo agregar debido a un fallo en la base de datos"
                 )
@@ -114,15 +122,15 @@ def insert_producto():
         )
 
 
-def add_to_venta(empty=False):
+def add_to_sale(empty=False):
 
     popup_input = du.popup_input("Digite el código del producto")
-    if popup_input == None:
-        du.popup_message("Operación cancelada")
+    if popup_input is None:
+        du.popup_message("Operación Cancelada")
         return
 
     print(f"input: {popup_input}")
-    products_list = dr.read_productos(popup_input)
+    products_list = dr.read_products_in_inventory(popup_input)
     print(f"list: {products_list}")
 
     if products_list == []:
@@ -160,7 +168,7 @@ def add_to_venta(empty=False):
 
     print(f"Pl: {product_to_add}")
 
-    if product_to_add == None or product_to_add == []:
+    if product_to_add is None or product_to_add == []:
         return
 
     product_quantity = int(product_to_add[4])
@@ -169,7 +177,7 @@ def add_to_venta(empty=False):
 
     while not valid_amount:
         amount_to_add = du.popup_input("Digite la cantidad")
-        if amount_to_add == None:
+        if amount_to_add is None:
             return
         elif int(amount_to_add) <= product_quantity:
             valid_amount = True
@@ -222,9 +230,9 @@ def insert_client():
         du.exec_query(query_str)
 
     # if dict_product == 'Cancel':
-    #     du.popup_message("Operacion cancelada")
+    #     du.popup_message("Operación Cancelada")
     # elif du.verify_dict(dict_product):
-    #     id_tipo_producto = dr.find_tipo_producto_id(dict_product['productCode'])
+    #     id_tipo_producto = dr.find_product_type_id(dict_product['productCode'])
     #     if id_tipo_producto != None:
     # query_str = ("""
     #     INSERT INTO Productos (

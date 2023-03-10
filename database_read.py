@@ -1,10 +1,9 @@
 import database_util as du
-import re
 
 database = "Pet-shop.db"
 
 
-def tipos_producto_ret_data(data: list):
+def product_types_ret_data(data: list):
     ret_data = []
     print(f"data: {data}")
     for row in data:
@@ -35,7 +34,7 @@ def tipos_producto_ret_data(data: list):
     return ret_data
 
 
-def productos_ret_data(data: list):
+def inventory_ret_data(data: list):
     ret_data = []
     for row in data:
         new_row = (row[0], row[1], row[2], str(row[3]) + "%", row[4])
@@ -44,7 +43,7 @@ def productos_ret_data(data: list):
     return ret_data
 
 
-def read_tipos_producto(user_input=""):
+def read_product_types(user_input=""):
     if user_input == "":
         return du.exec_query(
             """
@@ -78,7 +77,7 @@ def read_tipos_producto(user_input=""):
         )
 
 
-def find_tipo_producto_id(user_input: str):
+def find_product_type_id(user_input: str):
     data = du.exec_query(
         f"""
         SELECT 
@@ -106,7 +105,7 @@ def find_product_type_bar_code(prod_name: str):
     return data[0][0]
 
 
-def read_productos(user_input=""):
+def read_products_in_inventory(user_input=""):
     print(f"input_type: {type(user_input)}")
     if user_input == "":
         return du.exec_query(
@@ -281,7 +280,7 @@ def read_current_sale_id():
     return du.exec_query("SELECT MAX(id) FROM Compras")[0][0]
 
 
-def find_proveedor_id(provider_name: str):
+def find_provider_id(provider_name: str):
     return du.exec_query(
         f"""
         SELECT  
@@ -300,34 +299,42 @@ def read_grooming():
 
 def read_clients(client_name=""):
     if client_name == "":
-        return du.exec_query(
+        str_ret = du.exec_query(
             f"""
             SELECT
                 nombre,
                 CASE
                     WHEN telefono IS NULL
                         THEN 'Sin numero'
-                END
+                    ELSE
+                        telefono
+                    END,
+                id
             FROM 
                 Clientes
             """
         )
+        print(f"client_res: {str_ret}")
+        return str_ret
     else:
-        return du.exec_query(
+        str_ret = du.exec_query(
             f"""
             SELECT
                 nombre,
-                telefono
             CASE
                 WHEN telefono is NULL
-                THEN telefono = 'Sin numero'
-                END
+                    THEN 'Sin numero'
+                ELSE
+                    telefono
+                END,
+            id
             FROM 
                 Clientes AS C
             WHERE
                 C.nombre = '{client_name}'
             """
         )
+        return str_ret
 
 
 def read_client_names(name=""):
@@ -373,7 +380,7 @@ def read_payment_types():
     return ret_list
 
 
-def read_mascotas(pet_name=""):
+def read_pets(pet_name=""):
     if pet_name == "":
         return du.exec_query(
             f"""
@@ -462,12 +469,12 @@ def closing_time() -> list:
     du.popup_message(ret_str, 0)
 
 
-def read_registro():
+def read_registry():
     data = du.exec_query("SELECT * FROM Registro")
     print(f"Registro de datos:\n{data}")
 
 
-def read_errores():
+def read_errors():
     data = du.exec_query("SELECT * FROM Errores")
     print("\ndatos: ")
     print(data)

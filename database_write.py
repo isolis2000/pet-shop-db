@@ -46,7 +46,7 @@ def create_tipos_producto(cursor):
                     nombre TEXT NOT NULL UNIQUE,
                     precio REAL NOT NULL,
                     ganancia REAL NOT NULL,
-                    codigoBarras char(6) NOT NULL UNIQUE,
+                    codigoBarras char(9),
                     idProveedor INTEGER,
                     FOREIGN KEY (idProveedor) REFERENCES Proveedores(id)
     ); """
