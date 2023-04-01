@@ -460,4 +460,6 @@ def main_window():
 
 main_window()
 
-# Arreglar edit tipos producto
+# Arreglar edit tipos producto (intentar hacer un cambio para ver error)
+# Arreglar edit tipos (provider)
+# Cantidad de dígitos después de editar tipo producto

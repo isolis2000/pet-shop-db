@@ -9,10 +9,10 @@ def new_product_type():
 
     layout = [
         [sg.Text("Insertar Tipo de Producto")],
-        [sg.Text("Nombre:"), sg.InputText(key="nombre")],
-        [sg.Text("Precio:"), sg.InputText(key="precio")],
-        [sg.Text("Porcentaje de Ganancia:"), sg.InputText(key="ganancia")],
-        [sg.Text("Nombre del Proveedor:"), sg.InputText(key="proveedor")],
+        [sg.Text("Nombre:"), sg.InputText(key="name")],
+        [sg.Text("Precio:"), sg.InputText(key="price")],
+        [sg.Text("Porcentaje de Ganancia:"), sg.InputText(key="profit")],
+        [sg.Text("Nombre del Proveedor:"), sg.InputText(key="provider")],
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
@@ -76,22 +76,29 @@ def new_product():
 
 def edit_product_type(product: list, iva: int):
     print(f"product: {product}")
-    nombre = product[0]
-    precio = str(product[1] * (1 - iva))
-    porcentaje_ganancia = str(product[2])
-    codigo_barras = product[3]
-    proveedor = product[4]
+    name = product[0]
+    profit = product[2]
+    price = ((product[1] / (100 + (iva * 100))) * 100) - profit
+    print(f"p1: {product[1]}")
+    print(f"iva: {iva}")
+    print(f"price: {price}, type: {type(price)}")
+    print(f"profit: {profit}, type: {type(profit)}")
+    profit_percentage = round((profit / price) * 100, 2)
+    print(f"a: {profit_percentage}, type: {type(profit_percentage)}")
+    profit_percentage_str = str(profit_percentage)
+    bar_code = product[3]
+    provider = product[4]
 
     layout = [
         [sg.Text("Editar Tipo de Producto")],
-        [sg.Text("Nombre:"), sg.InputText(nombre, key="nombre")],
-        [sg.Text("Precio:"), sg.InputText(precio, key="precio")],
+        [sg.Text("Nombre:"), sg.InputText(name, key="name")],
+        [sg.Text("Precio:"), sg.InputText(price, key="price")],
         [
             sg.Text("Porcentaje de Ganancia:"),
-            sg.InputText(porcentaje_ganancia, key="ganancia"),
+            sg.InputText(profit_percentage_str, key="profit"),
         ],
-        [sg.Text("Codigo de Barras:"), sg.InputText(codigo_barras, key="codigoBarras")],
-        [sg.Text("Proveedor:"), sg.InputText(proveedor, key="proveedor")],
+        [sg.Text("Codigo de Barras:"), sg.InputText(bar_code, key="codigoBarras")],
+        [sg.Text("Proveedor:"), sg.InputText(provider, key="provider")],
         [sg.Button("Editar", key="_EDIT_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 

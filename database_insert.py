@@ -19,35 +19,34 @@ def insert_provider(name: str):
 
 def insert_product_type():
 
-    dict_tipos = we.new_product_type()
-    if dict_tipos == "Cancel":
+    dict_types = we.new_product_type()
+    if dict_types == "Cancel":
         du.popup_message("Operación Cancelada")
         return
 
-    provider_name = dict_tipos["proveedor"]
-    proveedor_res = dr.find_provider_id(provider_name)
-    print(f"proveedor_res: {proveedor_res}")
-    if proveedor_res == []:
+    print(f"dict_types: {dict_types}")
+    provider_name = dict_types["provider"]
+    provider_res = dr.find_provider_id(provider_name)
+    print(f"provider_res: {provider_res}")
+    if provider_res == []:
         insert_provider(provider_name)
 
-    if du.verify_dict(dict_tipos):
-        print(dict_tipos)
-        print("NOMBRE: " + dict_tipos["nombre"])
+    if du.verify_dict(dict_types):
+        print(dict_types)
+        print("NOMBRE: " + dict_types["name"])
 
-        name = dict_tipos["nombre"]
-        price = (
-            float(dict_tipos["precio"])
-            + float(dict_tipos["precio"]) * float(dict_tipos["ganancia"]) / 100
-        ) * (1 + du.iva)
-        profit = float(dict_tipos["precio"]) * float(dict_tipos["ganancia"]) / 100
+        name = dict_types["name"]
+        profit = float(dict_types["price"]) * float(dict_types["profit"]) / 100
+        print(f"profit: {profit}")
+        price = (float(dict_types["price"]) + profit) * (1 + du.iva)
         id_provider = dr.find_provider_id(provider_name)[0][0]
 
         # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        # (dict_tipos['nombre'], dict_tipos['precio'], dict_tipos['ganancia'], dict_tipos['codigoBarras'])
+        # (dict_types['nombre'], dict_types['precio'], dict_types['ganancia'], dict_types['codigoBarras'])
 
         # query_str = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        #                 (dict_tipos['nombre'], str(float(dict_tipos['precio']) + float(dict_tipos['precio']) * float(dict_tipos['ganancia'])/100),
-        #                  str(float(dict_tipos['precio']) * float(dict_tipos['ganancia'])/100), dict_tipos['codigoBarras'])"
+        #                 (dict_types['nombre'], str(float(dict_types['precio']) + float(dict_types['precio']) * float(dict_types['ganancia'])/100),
+        #                  str(float(dict_types['precio']) * float(dict_types['ganancia'])/100), dict_types['codigoBarras'])"
         query_str = "SELECT MAX(seq)  FROM SQLITE_SEQUENCE WHERE name='TiposProducto'"
         id_to_insert = 1
         query_res = du.exec_query(query_str)[0][0]
@@ -73,9 +72,9 @@ def insert_product_type():
         if du.exec_query(query_str) != None:
             registry_str = f"""
                 Se inserto un nuevo tipo de producto con los siguientes datos:
-                    nombre: {dict_tipos["nombre"]}
-                    precio: {dict_tipos["precio"]}
-                    ganancia: {dict_tipos["ganancia"]}
+                    nombre: {dict_types["name"]}
+                    precio: {dict_types["price"]}
+                    ganancia: {dict_types["profit"]}
                 """
             du.insert_registro(registry_str)
         else:

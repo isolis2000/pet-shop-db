@@ -7,28 +7,27 @@ import printing as pr
 def edit_product_type(data_selected):
 
     print(f"data_selected: {data_selected}")
-    id_producto = dr.find_product_type_id(data_selected[4])
-    data_product = dr.read_product_types(data_selected[4])
+    id_producto = dr.find_product_type_id(data_selected[3])
+    data_product = dr.read_product_types(data_selected[3])
     dict_tipos = we.edit_product_type(data_product[0], du.iva)
 
     if dict_tipos == "Cancel":
         du.popup_message("Operación Cancelada")
     elif du.verify_dict(dict_tipos):
         print(dict_tipos)
-        print("NOMBRE: " + dict_tipos["nombre"])
 
         # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
         # (dict_tipos['nombre'], dict_tipos['precio'], dict_tipos['ganancia'], dict_tipos['codigoBarras'])
 
         str_exec = f"""
             UPDATE TiposProducto 
-                SET nombre = '{dict_tipos["nombre"]}',
-                    precio = {float(dict_tipos["precio"]) 
-                                + float(dict_tipos["precio"]) 
-                                * float(dict_tipos["ganancia"])/100
+                SET nombre = '{dict_tipos["name"]}',
+                    precio = {float(dict_tipos["price"]) 
+                                + float(dict_tipos["price"]) 
+                                * float(dict_tipos["profit"])/100
                               }, 
-                    ganancia = {float(dict_tipos["precio"]) 
-                                * float(dict_tipos["ganancia"])/100
+                    ganancia = {float(dict_tipos["price"]) 
+                                * float(dict_tipos["profit"])/100
                                 },
                     codigoBarras = '{dict_tipos["codigoBarras"]}'
                 WHERE 

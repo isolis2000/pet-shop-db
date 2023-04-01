@@ -12,7 +12,7 @@ def product_types_ret_data(data: list):
         price = row[1]
         price_no_iva = price / (1 + du.iva)
         profit = row[2]
-        profit_percentage = round((profit / (price_no_iva - profit)) * 100, 2)
+        profit_percentage = round((profit / price_no_iva) * 100, 2)
         profit_str = f"{profit} ({profit_percentage}%)"
         bar_code = row[3]
         provider_name = row[4]
@@ -50,7 +50,7 @@ def read_product_types(user_input=""):
             SELECT 
                 TP.nombre, 
                 round(TP.precio, 2), 
-                TP.ganancia, 
+                round(TP.ganancia, 2), 
                 TP.codigoBarras,
                 P.nombre
             FROM 
@@ -64,7 +64,7 @@ def read_product_types(user_input=""):
             SELECT 
                 TP.nombre, 
                 round(TP.precio, 2), 
-                TP.ganancia, 
+                round(TP.ganancia, 2), 
                 TP.codigoBarras,
                 P.nombre
             FROM 
@@ -88,6 +88,7 @@ def find_product_type_id(user_input: str):
             codigoBarras='{user_input}'
             OR nombre='{user_input}'"""
     )
+    print(f"data: {user_input}")
     return data[0][0]
 
 
