@@ -434,7 +434,7 @@ def main_window():
                 data_sale = search(values["_INPUT_S_"])
                 window["_TABLE_S_"].update(data_sale)
         elif event == "_GENERATE_CODES_":
-            bc.generate_bar_codes_pdf()
+            bc.generate_bar_codes_pdf(dr.read_product_types())
         elif event == "_CLOSING_":
             dr.closing_time()
 

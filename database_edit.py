@@ -22,14 +22,14 @@ def edit_product_type(data_selected):
         str_exec = f"""
             UPDATE TiposProducto 
                 SET nombre = '{dict_tipos["name"]}',
-                    precio = {float(dict_tipos["price"]) 
+                    precio = {(float(dict_tipos["price"]) 
                                 + float(dict_tipos["price"]) 
-                                * float(dict_tipos["profit"])/100
+                                * float(dict_tipos["profit"])/100)
+                                * (1 + du.iva)
                               }, 
                     ganancia = {float(dict_tipos["price"]) 
                                 * float(dict_tipos["profit"])/100
-                                },
-                    codigoBarras = '{dict_tipos["codigoBarras"]}'
+                                }
                 WHERE 
                     id = {id_producto}
             """

@@ -52,7 +52,8 @@ def read_product_types(user_input=""):
                 round(TP.precio, 2), 
                 round(TP.ganancia, 2), 
                 TP.codigoBarras,
-                P.nombre
+                P.nombre,
+                TP.id
             FROM 
                 TiposProducto AS TP
                 INNER JOIN Proveedores AS P ON P.id = TP.idProveedor
@@ -66,7 +67,8 @@ def read_product_types(user_input=""):
                 round(TP.precio, 2), 
                 round(TP.ganancia, 2), 
                 TP.codigoBarras,
-                P.nombre
+                P.nombre,
+                TP.id
             FROM 
                 TiposProducto AS TP
                 INNER JOIN Proveedores AS P ON P.id = TP.idProveedor
@@ -77,19 +79,29 @@ def read_product_types(user_input=""):
         )
 
 
-def find_product_type_id(user_input: str):
-    data = du.exec_query(
-        f"""
+def find_product_type_id(user_input=""):
+    if user_input == "":
+        data = du.exec_query(
+            f"""
         SELECT 
             id 
         FROM 
-            TiposProducto 
-        WHERE 
-            codigoBarras='{user_input}'
-            OR nombre='{user_input}'"""
-    )
-    print(f"data: {user_input}")
-    return data[0][0]
+            TiposProducto
+            """
+        )
+        return data
+    else:
+        data = du.exec_query(
+            f"""
+            SELECT 
+                id 
+            FROM 
+                TiposProducto 
+            WHERE 
+                codigoBarras='{user_input}'
+                OR nombre='{user_input}'"""
+        )
+        return data[0][0]
 
 
 def find_product_type_bar_code(prod_name: str):

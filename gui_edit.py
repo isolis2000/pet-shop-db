@@ -97,7 +97,6 @@ def edit_product_type(product: list, iva: int):
             sg.Text("Porcentaje de Ganancia:"),
             sg.InputText(profit_percentage_str, key="profit"),
         ],
-        [sg.Text("Codigo de Barras:"), sg.InputText(bar_code, key="codigoBarras")],
         [sg.Text("Proveedor:"), sg.InputText(provider, key="provider")],
         [sg.Button("Editar", key="_EDIT_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
