@@ -12,6 +12,7 @@ def create_all():
         create_razas(cursor)
         create_clientes_peluqueria(cursor)
         create_tipos_pago(cursor)
+        insert_tipos_pago(cursor)
         create_compras(cursor)
         create_compras_productos(cursor)
         create_registro(cursor)
@@ -20,6 +21,7 @@ def create_all():
         print("Failed to connect with sqlite3 database", error)
     finally:
         if connection:
+            connection.commit()
             cursor.close()
             connection.close()
             print("the sqlite connection is closed")
@@ -121,10 +123,24 @@ def create_tipos_pago(cursor):
     command = """ CREATE TABLE TiposPago (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL
-    ); """  # resultados: En Progreso, Exitosa, Cancelada
+    ); """
 
     cursor.execute(command)
+
     print("Table TiposPago successfully created")
+
+
+def insert_tipos_pago(cursor):
+    payment_types = ["Otro", "Efectivo", "SINPE", "Tarjeta"]
+
+    for payment in payment_types:
+        command = f"""
+            INSERT INTO TiposPago (nombre)
+            VALUES ('{payment}')
+        """
+        print(command)
+        cursor.execute(command)
+        print(f"payment {payment} added")
 
 
 def create_compras(cursor):

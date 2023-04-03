@@ -1,6 +1,7 @@
 from tkinter.simpledialog import askfloat
 import PySimpleGUI as sg
 import datetime
+import database_util as du
 
 base64_str = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB0ElEQVRIS+1VvU4CQRDe7QQTf3I+gyaowUQTbdTIG2ClrSWlhfoKkmhrZ6uVvIFGbCg0kR8x+gyehsLD0KzfzB24e7d3QEFMjAfF3Ny38+18M7sjO52OEiN8pI2gXLkHpRQba8sDUZcrD8Ap4FcieCvBHQjUUAS0ITEYgZvPiafDIi+YPz4Aka+gxE+3yUfv5G8eFYUCjPBO6drIwsjAzW8JJaW42i1gtRLbl2cUhUMJ+AMuYjPs0k4B64C/8PEzGolB8AYCt/0lbvf2eReb56fCSaXMaAikE7leFy+BPwF+DAQ3vSwiBPTlxf1gwJwzHS0aMlHIjqShP9mv78ArKWadKfbrMlklYgVI1J4syRKFpUuQKMdy6AWNCB5TdL0BYjNofXp9+152JaI0qbNIrpA9kU7ba8AEDA7qarODz6FGMlSKJ/Da3J7VepPDZBczotZoco9HbGCog9mv2ZThRJo6z3+MIrc8ZIBVtfozHyJarJOxja1nFwK/xaagk+O/JhFqQNo+BhItIYM4u9pAltCOMLpNARJq8C9RhpvgD0tEo5K6ojukk06rf5MGB1+zqaPWV39GbWRkEol52YWupyRWEIbnsnUm973xhgCMnOAbzkiRYGtBf20AAAAASUVORK5CYII="
 
@@ -31,7 +32,12 @@ def new_product_type():
     return values
 
 
-def new_product():
+def new_product(products_list: list):
+
+    product_names_list = [x[0] for x in products_list]
+    product_name = popup_select(product_names_list)
+    list_index = product_names_list.index(product_name)
+    product_code = products_list[list_index][3]
 
     layout = [
         [sg.Text("Agregar Producto")],
@@ -51,7 +57,7 @@ def new_product():
         ],
         [sg.Text("Porcentaje de descuento:"), sg.InputText(key="discount")],
         [sg.Text("Cantidad:"), sg.InputText(key="amount")],
-        [sg.Text("Codigo del producto:"), sg.InputText(key="productCode")],
+        [sg.Text("Producto:"), sg.Text(product_code, key="productCode")],
         [sg.Button("Agregar", key="_ADD_"), sg.Button("Cancelar", key="_CANCEL_")],
     ]
 
@@ -71,20 +77,15 @@ def new_product():
             submited = True
 
     window.close()
+    values["productCode"] = window["productCode"].get()
     return values
 
 
 def edit_product_type(product: list, iva: int):
-    print(f"product: {product}")
     name = product[0]
     profit = product[2]
     price = ((product[1] / (100 + (iva * 100))) * 100) - profit
-    print(f"p1: {product[1]}")
-    print(f"iva: {iva}")
-    print(f"price: {price}, type: {type(price)}")
-    print(f"profit: {profit}, type: {type(profit)}")
     profit_percentage = round((profit / price) * 100, 2)
-    print(f"a: {profit_percentage}, type: {type(profit_percentage)}")
     profit_percentage_str = str(profit_percentage)
     bar_code = product[3]
     provider = product[4]
@@ -252,17 +253,3 @@ def popup_finalize_sale(payments_list: list, clients_list: list, final_price: fl
         window.close()
         final_values.append(values["_PAYMENT_"])
     return final_values
-
-
-# edit_client(["1","2"])
-
-
-# usage examples
-# nbr = popup_select([1,2,3]) # returns single number
-# lst = popup_select([1,2,3],select_multiple=True) # returns list of selected items
-
-# print(
-#     popup_finalize_sale(
-#         ["No especificado", "Efectivo", "Tarjeta", "SINPE"], ["Huu", "Chan"]
-#     )
-# )

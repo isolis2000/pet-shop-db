@@ -33,7 +33,6 @@ test_products = [
         "descuento": 10000,
     },
 ]
-# + numero de 5 digitos
 
 
 def use_printer(fileName: str):
@@ -42,15 +41,12 @@ def use_printer(fileName: str):
 
 class PDF(FPDF):
 
-    # modifiedHeight: int
     borders = False
 
     def custom_header(self):
-        # headerWidth = base_width/2
         self.set_xy(1, 5)
         self.set_font("Arial", "", base_font_num + 2)
         self.set_margins(1, 1)
-        # self.set_text_color(220, 50, 50)
         lineY = self.get_y() - height_per_obj / 2
         lineX = 1
         self.line(lineX, lineY, base_width - lineX, lineY)
@@ -62,7 +58,6 @@ class PDF(FPDF):
             border=self.borders,
             ln=1,
         )
-        # self.set_xy(self.get_x(), self.get_y() + height_per_obj)
         self.set_font("Arial", "B", base_font_num + 3)
         self.cell(
             w=0,
@@ -113,7 +108,6 @@ class PDF(FPDF):
         subtotal = 0.0
         descuento_total = 0.0
         for d in products:
-            # subTotalProducto = d['subtotal'] - d['descuento']
             subtotal += d["subtotal"]
             descuento_total += d["descuento"]
 
@@ -200,10 +194,6 @@ class PDF(FPDF):
             border=self.borders,
             ln=1,
         )
-        # self.set_font('Arial', 'B', base_font_num)
-        # self.cell(w=16, h=height_per_obj, txt="Nombre:", border=self.borders)
-        # self.set_font('Arial', '', base_font_num)
-        # self.cell(w=0, h=height_per_obj, txt=name, border=self.borders, ln=1)
 
 
 def generate_receipt(
@@ -213,7 +203,6 @@ def generate_receipt(
     date_time: str,
     final_price: float,
 ):
-    print(f"RECEIPT: {products_list}")
     amount_of_items = len(products_list)
     final_height = base_height + amount_of_items * height_per_obj
     pdf = PDF(orientation="P", unit="mm", format=(base_width, final_height))
@@ -221,10 +210,4 @@ def generate_receipt(
     pdf.custom_header()
     pdf.body(receipt_number, "6362-9187", client_name, products_list, final_price)
     pdf.custom_footer(date_time)
-    # pdf.lines()
-    # pdf.header(modifiedHeight=final_height)
     pdf.output(f"facturas/{date_time}_{receipt_number}.pdf", "F")
-    # use_printer('test.pdf')
-
-
-# generate_receipt(14, "Huu", test_products, get_today_date())

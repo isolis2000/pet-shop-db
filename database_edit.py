@@ -2,22 +2,23 @@ import gui_edit as we
 import database_read as dr
 import database_util as du
 import printing as pr
+import database_insert as di
 
 
 def edit_product_type(data_selected):
 
-    print(f"data_selected: {data_selected}")
-    id_producto = dr.find_product_type_id(data_selected[3])
+    id_product = dr.find_product_type_id(data_selected[3])
     data_product = dr.read_product_types(data_selected[3])
     dict_tipos = we.edit_product_type(data_product[0], du.iva)
 
     if dict_tipos == "Cancel":
         du.popup_message("Operación Cancelada")
     elif du.verify_dict(dict_tipos):
-        print(dict_tipos)
-
-        # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        # (dict_tipos['nombre'], dict_tipos['precio'], dict_tipos['ganancia'], dict_tipos['codigoBarras'])
+        provider_name = dict_tipos["provider"]
+        id_provider = dr.find_provider_id(provider_name)
+        if len(id_provider) == 0:
+            di.insert_provider(provider_name)
+            id_provider = dr.find_provider_id(provider_name)
 
         str_exec = f"""
             UPDATE TiposProducto 
@@ -29,12 +30,12 @@ def edit_product_type(data_selected):
                               }, 
                     ganancia = {float(dict_tipos["price"]) 
                                 * float(dict_tipos["profit"])/100
-                                }
+                                },
+                    idProveedor = {id_provider[0][0]}
+                    
                 WHERE 
-                    id = {id_producto}
+                    id = {id_product}
             """
-
-        print(str_exec)
 
         if du.exec_query(str_exec) != None:
             du.popup_message("Producto editado exitosamente")
@@ -50,14 +51,12 @@ def edit_product_type(data_selected):
 
 def update_inventory_after_sale():
     sale_lst = dr.read_current_order()
-    print(f"sale lst: {sale_lst}")
     for prod in sale_lst:
         str_exec = f"""
         UPDATE Productos
             SET cantidad = cantidad - {prod[0]}
             WHERE id = {prod[6]}
         """
-        print(f"exec: {str_exec}")
         du.exec_query(str_exec)
 
 
@@ -80,7 +79,6 @@ def edit_client(client_name: str):
     selected_client = dr.read_clients(client_name)[0]
     user_input = we.edit_client(selected_client)
 
-    print(f"usr_input: {selected_client}")
     if user_input == "Cancel" or not (
         user_input["phone"].isnumeric() or user_input["phone"] == ""
     ):
@@ -95,7 +93,6 @@ def edit_client(client_name: str):
             telefono = {user_input["phone"]}
         WHERE id = {selected_client[2]};
     """
-    print(str_exec)
     du.exec_query(str_exec)
 
 
@@ -103,7 +100,6 @@ def finalizar_compra() -> bool:
     curr_sale = dr.read_current_order()
     payments_list = dr.read_payment_types()
     clients_list = dr.read_client_names()
-    print(f"lists: {payments_list}, {clients_list}")
 
     keys_list = ["cantidad", "descripcion", "subtotal", "descuento"]
     res_lst = []
@@ -119,11 +115,9 @@ def finalizar_compra() -> bool:
         du.popup_message("Operación Cancelada")
         return False
 
-    print(f"payment: {answers}")
     payment_type = answers[0]
     client = answers[1]
 
-    print(f"final_price: {final_price}")
     confirmation_text = ""
     if len(answers) == 3:
         payment = abs(float(answers[2]))
@@ -142,8 +136,6 @@ def finalizar_compra() -> bool:
             {'¿Seguro que desea finalizar la compra?':^40}"""
 
     if du.confirmation_popup(confirmation_text):
-
-        print(f"payment: {payment_type}, client: {client}")
 
         update_inventory_after_sale()
 
@@ -166,7 +158,6 @@ def finalizar_compra() -> bool:
                 idCliente = {client_id}
             WHERE id = {order_id}
         """
-        print(str_exec)
         du.exec_query(str_exec)
         return True
     else:

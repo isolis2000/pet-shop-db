@@ -24,29 +24,17 @@ def insert_product_type():
         du.popup_message("Operación Cancelada")
         return
 
-    print(f"dict_types: {dict_types}")
     provider_name = dict_types["provider"]
     provider_res = dr.find_provider_id(provider_name)
-    print(f"provider_res: {provider_res}")
     if provider_res == []:
         insert_provider(provider_name)
 
     if du.verify_dict(dict_types):
-        print(dict_types)
-        print("NOMBRE: " + dict_types["name"])
 
         name = dict_types["name"]
         profit = float(dict_types["price"]) * float(dict_types["profit"]) / 100
-        print(f"profit: {profit}")
         price = (float(dict_types["price"]) + profit) * (1 + du.iva)
         id_provider = dr.find_provider_id(provider_name)[0][0]
-
-        # insert = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        # (dict_types['nombre'], dict_types['precio'], dict_types['ganancia'], dict_types['codigoBarras'])
-
-        # query_str = "INSERT INTO TiposProducto (nombre, precio, ganancia, codigoBarras) VALUES (?, ?, ?, ?)",
-        #                 (dict_types['nombre'], str(float(dict_types['precio']) + float(dict_types['precio']) * float(dict_types['ganancia'])/100),
-        #                  str(float(dict_types['precio']) * float(dict_types['ganancia'])/100), dict_types['codigoBarras'])"
         query_str = "SELECT MAX(seq)  FROM SQLITE_SEQUENCE WHERE name='TiposProducto'"
         id_to_insert = 1
         query_res = du.exec_query(query_str)[0][0]
@@ -68,7 +56,6 @@ def insert_product_type():
                 {bar_code},
                 {id_provider})
         """
-        print(query_str)
         if du.exec_query(query_str) != None:
             registry_str = f"""
                 Se inserto un nuevo tipo de producto con los siguientes datos:
@@ -87,7 +74,7 @@ def insert_product_type():
 
 def insert_product():
 
-    dict_product = we.new_product()
+    dict_product = we.new_product(dr.read_product_types())
     if dict_product == "Cancel":
         du.popup_message("Operación Cancelada")
     elif du.verify_dict(dict_product):
@@ -106,7 +93,6 @@ def insert_product():
                 {dict_product["amount"]},
                 {str(id_tipo_producto)})
             """
-            print(query_str)
             if du.exec_query(query_str) is None:
                 du.popup_message(
                     "Producto no se pudo agregar debido a un fallo en la base de datos"
@@ -128,9 +114,7 @@ def add_to_sale(empty=False):
         du.popup_message("Operación Cancelada")
         return
 
-    print(f"input: {popup_input}")
     products_list = dr.read_products_in_inventory(popup_input)
-    print(f"list: {products_list}")
 
     if products_list == []:
         du.popup_message("No existe ningún producto con este código")
@@ -155,7 +139,6 @@ def add_to_sale(empty=False):
                     0)
         """
         du.exec_query(query_str)
-        print(query_str)
 
     product_to_add = []
     current_sale = dr.read_current_sale_id()
@@ -164,8 +147,6 @@ def add_to_sale(empty=False):
         product_to_add = we.popup_select(products_list)
     else:
         product_to_add = products_list[0]
-
-    print(f"Pl: {product_to_add}")
 
     if product_to_add is None or product_to_add == []:
         return
@@ -180,8 +161,6 @@ def add_to_sale(empty=False):
             return
         elif int(amount_to_add) <= product_quantity:
             valid_amount = True
-
-    print(product_to_add)
 
     product_id = product_to_add[5]
 
@@ -199,17 +178,13 @@ def add_to_sale(empty=False):
 
     du.exec_query(query_str)
 
-    # query_str = f"""
-    #     INSERT INTO
-    # """
-    print(product_to_add)
-    print(current_sale)
-
 
 def insert_client():
     dict_client = we.new_client()
 
-    if dict_client["name"] == "":
+    if dict_client == "Cancel":
+        du.popup_message("Operación Cancelada")
+    elif dict_client["name"] == "":
         du.popup_message("Es necesario un nombre para agregar un cliente")
     else:
         query_str = ""
@@ -225,37 +200,4 @@ def insert_client():
                         '{dict_client["name"]}',
                         '{dict_client["phone"]}')
                 """
-        print(query_str)
         du.exec_query(query_str)
-
-    # if dict_product == 'Cancel':
-    #     du.popup_message("Operación Cancelada")
-    # elif du.verify_dict(dict_product):
-    #     id_tipo_producto = dr.find_product_type_id(dict_product['productCode'])
-    #     if id_tipo_producto != None:
-    # query_str = ("""
-    #     INSERT INTO Productos (
-    #         fechaCompra,
-    #         fechaVencimiento,
-    #         descuento,
-    #         cantidad,
-    #         id_tipo_producto)
-    #     VALUES ('""" +
-    #             dict_product['buyDate'] + "', '" +
-    #             dict_product['expirationDate'] + "', " +
-    #             dict_product['discount'] + ", " +
-    #             dict_product['amount'] + ", " +
-    #             str(id_tipo_producto) + ")")
-    #         print(query_str)
-    #         if du.exec_query(query_str) != None:
-    #             du.popup_message(
-    #                 "Producto agregado al inventario de manera exitosa")
-    #         else:
-    #             du.popup_message(
-    #                 "Producto no se pudo agregar debido a un fallo en la base de datos")
-    #     else:
-    #         du.popup_message(
-    #             "Producto no se pudo agregar, favor verifique que exista este tipo de producto y que el codigo este correcto.")
-    # else:
-    #     du.popup_message(
-    #         "Datos ingresados de manera incorrecta, favor verifique que todas las casillas esten llenas con lo que se pide")

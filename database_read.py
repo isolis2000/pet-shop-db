@@ -5,7 +5,6 @@ database = "Pet-shop.db"
 
 def product_types_ret_data(data: list):
     ret_data = []
-    print(f"data: {data}")
     for row in data:
 
         name = row[0]
@@ -16,10 +15,6 @@ def product_types_ret_data(data: list):
         profit_str = f"{profit} ({profit_percentage}%)"
         bar_code = row[3]
         provider_name = row[4]
-        print("----------------------------------------------------------")
-        print(f"price: {price}")
-        print(f"price no iva: {price_no_iva}")
-        print(f"profit: {profit}")
 
         new_row = (
             name,
@@ -28,7 +23,6 @@ def product_types_ret_data(data: list):
             provider_name,  # Proveedores
             bar_code,
         )
-        # print(new_row)
         ret_data.append(new_row)
 
     return ret_data
@@ -38,7 +32,6 @@ def inventory_ret_data(data: list):
     ret_data = []
     for row in data:
         new_row = (row[0], row[1], row[2], str(row[3]) + "%", row[4])
-        # print(new_row)
         ret_data.append(new_row)
     return ret_data
 
@@ -119,7 +112,6 @@ def find_product_type_bar_code(prod_name: str):
 
 
 def read_products_in_inventory(user_input=""):
-    print(f"input_type: {type(user_input)}")
     if user_input == "":
         return du.exec_query(
             """
@@ -154,41 +146,6 @@ def read_products_in_inventory(user_input=""):
                 OR P.id = '{user_input}'
             """
         )
-
-
-# def read_product_plus_discount(user_input: str):
-#     data = du.exec_query(
-#         f"""
-#         SELECT
-#             TP.nombre,
-#             (TP.precio - P.descuento) AS precio,
-#             P.fechaCompra,
-#             P.fechaVencimiento,
-#             P.descuento,
-#             P.cantidad
-#         FROM
-#             TiposProducto AS TP
-#             INNER JOIN Productos AS P ON TP.id = P.idTipoProducto
-#         WHERE
-#             TP.nombre = '{user_input}'
-#             OR TP.codigoBarras = '{user_input}'"""
-#     )
-#     # print(data)
-#     ret_data = []
-#     for row in data:
-#         new_row = (row[0], row[1], row[2], str(row[3]) + "%", row[4])
-#         # print(new_row)
-#         ret_data.append(new_row)
-#     return ret_data
-
-
-# def read_product_id(user_input: str):
-#     data = du.exec_query(
-#         f"""
-#         SELECT
-#             id
-#         """
-#     )
 
 
 def read_past_receipts(receipt_num=""):
@@ -239,7 +196,7 @@ def read_current_order(user_input=""):
             SELECT  
                 CP.Cantidad,
                 TP.nombre,
-                round((TP.precio - P.descuento) * CP.Cantidad,2) AS subtotal,
+                round((TP.precio * (1 - (P.descuento / 100))) * CP.Cantidad,2) AS subtotal,
                 P.descuento, 
                 TP.codigoBarras,
                 CP.id,
@@ -327,7 +284,6 @@ def read_clients(client_name=""):
                 Clientes
             """
         )
-        print(f"client_res: {str_ret}")
         return str_ret
     else:
         str_ret = du.exec_query(
@@ -484,10 +440,7 @@ def closing_time() -> list:
 
 def read_registry():
     data = du.exec_query("SELECT * FROM Registro")
-    print(f"Registro de datos:\n{data}")
 
 
 def read_errors():
     data = du.exec_query("SELECT * FROM Errores")
-    print("\ndatos: ")
-    print(data)

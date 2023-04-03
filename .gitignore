@@ -148,3 +148,6 @@ facturas/
 
 # testing
 testing.py
+
+# database
+.db

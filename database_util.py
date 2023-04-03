@@ -42,7 +42,6 @@ def insert_registro(message: str):
         '{message}'
         )
     """
-    print(query_str)
     exec_query(query_str)
 
 
