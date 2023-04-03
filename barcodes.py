@@ -12,6 +12,7 @@ def delete_files_in_dir(folder_path: str):
             if os.path.isfile(file_path):
                 os.remove(file_path)
         except Exception as e:
+            print(f"Error deleting {file_path}: {e}")
 
 
 def generate_bar_code_img(product_name: str, product_code: str):
