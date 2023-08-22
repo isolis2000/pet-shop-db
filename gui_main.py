@@ -270,6 +270,3 @@ def main_window():
             dr.closing_time()
 
     window.close()
-
-
-main_window()

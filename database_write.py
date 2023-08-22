@@ -9,6 +9,7 @@ def create_all():
         create_tipos_producto(cursor)
         create_productos(cursor)
         create_clientes(cursor)
+        insert_clientes(cursor)
         create_razas(cursor)
         create_clientes_peluqueria(cursor)
         create_tipos_pago(cursor)
@@ -85,6 +86,11 @@ def create_clientes(cursor):  # datos por definir
 
     cursor.execute(command)
     print("Table Clientes successfully created")
+
+
+def insert_clientes(cursor):
+    cursor.execute("INSERT INTO Clientes (id, nombre) VALUES (0, 'Sin definir')")
+    print("Client 'Sin definir' created")
 
 
 def create_razas(cursor):

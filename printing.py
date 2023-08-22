@@ -40,7 +40,6 @@ def use_printer(fileName: str):
 
 
 class PDF(FPDF):
-
     borders = False
 
     def custom_header(self):
@@ -77,7 +76,6 @@ class PDF(FPDF):
         products: list,
         final_price: float,
     ):
-
         self.set_font("Arial", "B", base_font_num)
         receiptText = f"{receipt_number:08}"
         self.cell(w=17, h=height_per_obj, txt="Factura No.:", border=self.borders)
